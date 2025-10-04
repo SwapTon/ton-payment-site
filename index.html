@@ -105,10 +105,6 @@
             background: var(--accent-primary);
         }
 
-        .ton-connect-button {
-            margin-left: 1rem;
-        }
-
         #tonconnect-button {
             margin-left: 1rem;
         }
@@ -186,6 +182,7 @@
             border-radius: 8px;
             padding: 1rem;
             margin-bottom: 1.5rem;
+            display: none;
         }
 
         .connected-wallet {
@@ -278,6 +275,43 @@
 
         .rate-item:last-child {
             margin-bottom: 0;
+        }
+
+        .promotion-banner {
+            background: linear-gradient(135deg, var(--warning), var(--accent-primary));
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            border: 1px solid var(--warning);
+        }
+
+        .promotion-banner h4 {
+            color: white;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .promotion-banner p {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 1rem;
+        }
+
+        .promotion-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .promotion-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
         }
 
         .primary-button {
@@ -675,7 +709,7 @@
                     </div>
                 </div>
 
-                <div class="wallet-status" id="walletStatus" style="display: none;">
+                <div class="wallet-status" id="walletStatus">
                     <div class="connected-wallet">
                         <span class="wallet-icon">👛</span>
                         <span class="wallet-address" id="connectedAddress"></span>
@@ -713,6 +747,15 @@
                             <span>Last update:</span>
                             <span id="rateUpdateTime">--:--:--</span>
                         </div>
+                    </div>
+
+                    <!-- АКЦІЙНА КНОПКА -->
+                    <div class="promotion-banner">
+                        <h4>🎉 Special Promotion!</h4>
+                        <p>Pay with 1 TON and get 2.5% discount on your next purchase!</p>
+                        <button class="promotion-button" id="promotionPayment">
+                            Pay 1 TON - Get 2.5% Discount
+                        </button>
                     </div>
 
                     <button id="createPayment" class="primary-button" disabled>
@@ -864,7 +907,7 @@
         // ЗМІНІТЬ ЦІ ЗНАЧЕННЯ ВІДПОВІДНО ДО ВАШИХ ПОТРЕБ
 
         const CONFIG = {
-            // ВКАЖІТЬ ВАШУ TON АДРЕСУ ТУТ:
+            // ВКАЖІТЬ ВАШУ TON АДРЕСУ ТУТ (ваш гаманець):
             RECIPIENT_TON_ADDRESS: "UQDYSduMmfE6sBBBhvTR1wGtTG0_hmsj_xRaIg7P_W6-Pv1y",
             
             // НАЛАШТУВАННЯ ОБМІНУ:
@@ -872,7 +915,11 @@
             SERVICE_FEE: 0, // 0% комісія
             PAYMENT_TIMEOUT: 900, // 15 хвилин в секундах
             MIN_AMOUNT: 10, // Мінімальна сума в USD
-            MAX_AMOUNT_TON: 150 // Максимальна сума в TON
+            MAX_AMOUNT_TON: 150, // Максимальна сума в TON
+            
+            // АКЦІЙНА ПРОПОЗИЦІЯ:
+            PROMOTION_TON_AMOUNT: 1, // Сума TON для акції
+            PROMOTION_DISCOUNT: 0.025 // Знижка 2.5%
         };
 
         // =============================================================================
@@ -885,6 +932,7 @@
         const rateValue = document.getElementById('rateValue');
         const rateUpdateTime = document.getElementById('rateUpdateTime');
         const createPaymentBtn = document.getElementById('createPayment');
+        const promotionPaymentBtn = document.getElementById('promotionPayment');
         const paymentModal = document.getElementById('paymentModal');
         const closeModal = document.getElementById('closeModal');
         const qrCode = document.getElementById('qrCode');
@@ -922,12 +970,11 @@
                 });
 
                 // Check if wallet is already connected
-                tonConnectUI.connectionRestored.then((connectedWallets) => {
-                    if (connectedWallets) {
-                        currentAccount = connectedWallets.account;
-                        updateWalletDisplay();
-                    }
-                });
+                const connectedWallets = await tonConnectUI.connectionRestored;
+                if (connectedWallets) {
+                    currentAccount = connectedWallets.account;
+                    updateWalletDisplay();
+                }
 
                 // Subscribe to connection status changes
                 tonConnectUI.onStatusChange((wallet) => {
@@ -937,6 +984,7 @@
 
             } catch (error) {
                 console.error('Failed to initialize TON Connect:', error);
+                showError('Failed to initialize wallet connection. Please refresh the page.');
             }
         }
 
@@ -959,12 +1007,11 @@
                 if (data && data.Valute && data.Valute.USD) {
                     // Get USD to RUB rate and convert to TON price
                     const usdToRub = data.Valute.USD.Value;
-                    // Assuming TON price is calculated based on market data
-                    // You can adjust this formula based on actual TON pricing
-                    const newRate = (usdToRub / 70).toFixed(2); // Adjusted calculation
+                    // Adjusted calculation for TON price
+                    const newRate = (usdToRub / 70).toFixed(2);
                     CONFIG.EXCHANGE_RATE = parseFloat(newRate);
                     updateExchangeRateDisplay();
-                    calculateTonAmount(); // Recalculate if user already entered amount
+                    calculateTonAmount();
                     return newRate;
                 } else {
                     throw new Error('Could not fetch rate data');
@@ -1024,6 +1071,15 @@
                 createPayment(usdAmount);
             });
             
+            // Акційна кнопка
+            promotionPaymentBtn.addEventListener('click', function() {
+                if (!currentAccount) {
+                    alert('Please connect your wallet first');
+                    return;
+                }
+                createPromotionPayment();
+            });
+            
             disconnectWallet.addEventListener('click', async function() {
                 if (tonConnectUI) {
                     await tonConnectUI.disconnect();
@@ -1053,10 +1109,8 @@
                 return;
             }
             
-            // Calculate TON amount without service fee
             const tonAmount = usdAmount / CONFIG.EXCHANGE_RATE;
             
-            // Check maximum limit
             if (tonAmount > CONFIG.MAX_AMOUNT_TON) {
                 alert(`Maximum amount is ${CONFIG.MAX_AMOUNT_TON} TON`);
                 tonAmountOutput.value = '';
@@ -1066,28 +1120,25 @@
             tonAmountOutput.value = tonAmount.toFixed(6);
         }
 
-        // Create payment transaction
+        // Create regular payment transaction
         async function createPayment(usdAmount) {
             try {
-                const tonAmount = usdAmount / CONFIG.EXCHANGE_RATE; // No service fee
+                const tonAmount = usdAmount / CONFIG.EXCHANGE_RATE;
                 
-                // Create transaction payload
                 const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + 900, // 15 minutes
+                    validUntil: Math.floor(Date.now() / 1000) + CONFIG.PAYMENT_TIMEOUT,
                     messages: [
                         {
                             address: CONFIG.RECIPIENT_TON_ADDRESS,
-                            amount: (tonAmount * 1000000000).toString(), // Convert to nanotons
+                            amount: (tonAmount * 1000000000).toString(),
                             comment: `Payment for $${usdAmount.toFixed(2)}`
                         }
                     ]
                 };
 
-                // Send transaction using TON Connect
                 const result = await tonConnectUI.sendTransaction(transaction);
                 
                 if (result) {
-                    // Show success message
                     showPaymentSuccess(usdAmount, tonAmount, result.boc);
                 }
                 
@@ -1101,57 +1152,44 @@
             }
         }
 
+        // Create promotion payment (1 TON for discount)
+        async function createPromotionPayment() {
+            try {
+                const transaction = {
+                    validUntil: Math.floor(Date.now() / 1000) + CONFIG.PAYMENT_TIMEOUT,
+                    messages: [
+                        {
+                            address: CONFIG.RECIPIENT_TON_ADDRESS,
+                            amount: (CONFIG.PROMOTION_TON_AMOUNT * 1000000000).toString(),
+                            comment: `Promotion payment: 1 TON for 2.5% discount`
+                        }
+                    ]
+                };
+
+                const result = await tonConnectUI.sendTransaction(transaction);
+                
+                if (result) {
+                    showPromotionSuccess(result.boc);
+                }
+                
+            } catch (error) {
+                console.error('Promotion payment failed:', error);
+                if (error?.message?.includes('User rejected')) {
+                    alert('Payment was cancelled by user');
+                } else {
+                    alert('Payment failed. Please try again.');
+                }
+            }
+        }
+
         // Show payment success
         function showPaymentSuccess(usdAmount, tonAmount, transactionBoc) {
-            const modal = document.createElement('div');
-            modal.className = 'payment-modal';
-            modal.style.display = 'flex';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>✅ Payment Successful</h3>
-                        <button class="close-modal">×</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="success-animation">
-                            <div style="font-size: 4rem; text-align: center;">🎉</div>
-                        </div>
-                        <div class="payment-details">
-                            <div class="detail-item">
-                                <span>Amount sent:</span>
-                                <span>${tonAmount.toFixed(6)} TON</span>
-                            </div>
-                            <div class="detail-item">
-                                <span>Amount received:</span>
-                                <span>$${usdAmount.toFixed(2)}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span>Transaction ID:</span>
-                                <span class="transaction-id">${transactionBoc.slice(0, 16)}...</span>
-                            </div>
-                        </div>
-                        <button class="primary-button" id="closeSuccessModal" style="margin-top: 1rem;">
-                            Close
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            
-            modal.querySelector('.close-modal').addEventListener('click', () => {
-                document.body.removeChild(modal);
-            });
-            
-            modal.querySelector('#closeSuccessModal').addEventListener('click', () => {
-                document.body.removeChild(modal);
-            });
-            
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    document.body.removeChild(modal);
-                }
-            });
+            alert(`Payment successful!\nAmount: ${tonAmount.toFixed(6)} TON\nTransaction: ${transactionBoc.slice(0, 16)}...`);
+        }
+
+        // Show promotion success
+        function showPromotionSuccess(transactionBoc) {
+            alert(`🎉 Promotion payment successful!\nYou paid 1 TON and now have 2.5% discount on your next purchase!\nTransaction: ${transactionBoc.slice(0, 16)}...`);
         }
 
         // Update exchange rate display
@@ -1176,6 +1214,11 @@
                     copyAddressBtn.style.background = 'var(--accent-primary)';
                 }, 2000);
             });
+        }
+
+        // Show error message
+        function showError(message) {
+            alert('Error: ' + message);
         }
 
         // Theme toggle functionality
