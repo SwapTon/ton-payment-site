@@ -823,7 +823,6 @@
         const tonConnectUI = new TonConnectUI({manifestUrl: 'https://swapton.github.io/ton-payment-site/tonconnect-manifest.json'});
 
         // TON Connect variables
-        let tonConnectUI;
         let currentAccount = null;
         let userHasDiscount = localStorage.getItem('userDiscount') === 'true'; // Перевіряємо чи є знижка
 
@@ -842,7 +841,7 @@
             try {
                 // Initialize TON Connect UI
                 tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-                    manifestUrl: window.location.origin + '/tonconnect-manifest.json',
+                    manifestUrl: 'https://swapton.github.io/ton-payment-site/tonconnect-manifest.json',
                     buttonRootId: 'tonconnect-button'
                 });
 
@@ -1146,4 +1145,5 @@
     </script>
 </body>
 </html>
+
 
