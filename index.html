@@ -820,6 +820,7 @@
         const walletStatus = document.getElementById('walletStatus');
         const connectedAddress = document.getElementById('connectedAddress');
         const disconnectWallet = document.getElementById('disconnectWallet');
+        const tonConnectUI = new TonConnectUI({manifestUrl: 'https://swapton.github.io/ton-payment-site/tonconnect-manifest.json'});
 
         // TON Connect variables
         let tonConnectUI;
@@ -1145,3 +1146,4 @@
     </script>
 </body>
 </html>
+
