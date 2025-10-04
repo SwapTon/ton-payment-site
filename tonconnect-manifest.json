@@ -1,7 +1,8 @@
+
 {
-  "url": "https://swapton.github.io/ton-payment-site/",
-  "name": "TON Payment Site",
-  "iconUrl": "https://swapton.github.io/ton-payment-site/icon.png",
-  "termsOfUseUrl": "https://swapton.github.io/ton-payment-site/terms.html",
-  "privacyPolicyUrl": "https://swapton.github.io/ton-payment-site/privacy.html"
+    "url": "https://swapton.github.io/ton-payment-site/",
+    "name": "TON Payment Site",
+    "iconUrl": "https://swapton.github.io/ton-payment-site/icon.png",
+    "termsOfUseUrl": "https://swapton.github.io/ton-payment-site/terms.html",
+    "privacyPolicyUrl": "https://swapton.github.io/ton-payment-site/privacy.html"
 }
