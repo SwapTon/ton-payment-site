@@ -7,12 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* Базові стилі та стилі для темної теми */
         :root {
             --bg-primary: #0f0f23;
             --bg-secondary: #1a1a2e;
@@ -33,13 +28,17 @@
             --bg-primary: #f8fafc;
             --bg-secondary: #ffffff;
             --bg-tertiary: #f1f5f9;
-            --accent-primary: #6366f1;
-            --accent-secondary: #818cf8;
             --text-primary: #1e293b;
             --text-secondary: #475569;
             --text-muted: #64748b;
             --border: #e2e8f0;
             --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
@@ -54,7 +53,9 @@
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border);
             padding: 1rem 0;
-            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .nav-container {
@@ -91,6 +92,10 @@
             color: var(--accent-secondary);
         }
 
+        #tonconnect-button {
+            margin-left: 1rem;
+        }
+
         .theme-toggle {
             background: var(--bg-tertiary);
             border: 1px solid var(--border);
@@ -99,14 +104,11 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
+            margin-left: 1rem;
         }
 
         .theme-toggle:hover {
             background: var(--accent-primary);
-        }
-
-        #tonconnect-button {
-            margin-left: 1rem;
         }
 
         .main-container {
@@ -118,10 +120,11 @@
         .hero-section {
             text-align: center;
             margin-bottom: 3rem;
+            padding: 4rem 0;
         }
 
         .hero-title {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 700;
             margin-bottom: 1rem;
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
@@ -131,7 +134,7 @@
         }
 
         .hero-subtitle {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             color: var(--text-secondary);
             max-width: 600px;
             margin: 0 auto;
@@ -141,26 +144,32 @@
             display: grid;
             grid-template-columns: 1fr 400px;
             gap: 2rem;
-            margin-bottom: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        @media (max-width: 968px) {
+            .exchange-container {
+                grid-template-columns: 1fr;
+            }
         }
 
         .exchange-card {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 8px 32px var(--shadow);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px var(--shadow);
         }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
 
         .card-header h3 {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: 600;
         }
 
@@ -170,8 +179,8 @@
             gap: 0.5rem;
             background: var(--success);
             color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
             font-size: 0.9rem;
             font-weight: 500;
         }
@@ -179,9 +188,9 @@
         .wallet-status {
             background: var(--bg-primary);
             border: 1px solid var(--success);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 2rem;
             display: none;
         }
 
@@ -193,36 +202,40 @@
         }
 
         .wallet-address {
-            font-family: monospace;
-            font-size: 0.9rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
             color: var(--success);
             flex: 1;
+            font-weight: 500;
         }
 
         .disconnect-btn {
             background: var(--error);
             color: white;
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.8rem;
-            transition: background 0.3s ease;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
 
         .disconnect-btn:hover {
             background: #dc2626;
+            transform: translateY(-1px);
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
             color: var(--text-secondary);
+            font-size: 1.1rem;
         }
 
         .input-group, .output-group {
@@ -231,79 +244,107 @@
             align-items: center;
         }
 
-        .form-input, .form-output {
+        .form-input {
             width: 100%;
-            padding: 1rem;
+            padding: 1.2rem;
             background: var(--bg-primary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
             color: var(--text-primary);
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
 
         .form-input:focus {
             outline: none;
             border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            transform: translateY(-1px);
         }
 
         .input-currency, .output-currency {
             position: absolute;
-            right: 1rem;
+            right: 1.2rem;
             color: var(--text-muted);
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 1.1rem;
         }
 
         .form-output {
+            width: 100%;
+            padding: 1.2rem;
             background: var(--bg-tertiary);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 600;
             cursor: not-allowed;
         }
 
         .rate-info {
             background: var(--bg-primary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 1.5rem 0;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
         }
 
         .rate-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.5rem;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            padding: 0.5rem 0;
         }
 
         .rate-item:last-child {
             margin-bottom: 0;
         }
 
+        .rate-item span:first-child {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .rate-item span:last-child {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
         .promotion-banner {
             background: linear-gradient(135deg, var(--warning), var(--accent-primary));
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2.5rem 0;
             text-align: center;
-            border: 1px solid var(--warning);
+            border: 2px solid var(--warning);
+            box-shadow: 0 10px 40px rgba(245, 158, 11, 0.3);
         }
 
         .promotion-banner h4 {
             color: white;
-            margin-bottom: 0.5rem;
-            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            font-size: 1.4rem;
+            font-weight: 700;
         }
 
         .promotion-banner p {
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 1rem;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 500;
         }
 
         .promotion-button {
             background: rgba(255, 255, 255, 0.2);
             color: white;
             border: 2px solid white;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            font-weight: 600;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
@@ -312,6 +353,7 @@
         .promotion-button:hover {
             background: rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
         }
 
         .primary-button {
@@ -319,64 +361,72 @@
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             color: white;
             border: none;
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            padding: 1.3rem 2rem;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
+            margin-top: 1rem;
         }
 
         .primary-button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.4);
         }
 
         .primary-button:disabled {
             background: var(--bg-tertiary);
+            color: var(--text-muted);
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
 
         .button-content {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.8rem;
         }
 
         .ton-connect-info {
             background: var(--bg-primary);
-            border: 1px solid var(--accent-primary);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-top: 1rem;
-            font-size: 0.9rem;
+            border: 2px solid var(--accent-primary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
         }
 
         .ton-connect-info p {
             margin: 0;
             color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 500;
+            text-align: center;
         }
 
         .info-card {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 2rem;
+            border-radius: 20px;
+            padding: 2.5rem;
             height: fit-content;
+            box-shadow: 0 20px 60px var(--shadow);
         }
 
         .info-card h4 {
-            margin-bottom: 1.5rem;
-            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            font-size: 1.6rem;
             font-weight: 600;
+            color: var(--text-primary);
         }
 
         .info-item {
             display: flex;
             justify-content: space-between;
-            padding: 1rem 0;
+            align-items: center;
+            padding: 1.2rem 0;
             border-bottom: 1px solid var(--border);
         }
 
@@ -384,193 +434,61 @@
             border-bottom: none;
         }
 
+        .info-item span:first-child {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .info-item span:last-child {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
         .ton-features {
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
+            margin-top: 2.5rem;
+            padding-top: 2.5rem;
             border-top: 1px solid var(--border);
+        }
+
+        .ton-features h4 {
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            font-weight: 600;
         }
 
         .feature-item {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 0;
+            gap: 1rem;
+            padding: 1rem 0;
             color: var(--text-secondary);
-        }
-
-        .feature-icon {
-            font-size: 1.2rem;
-        }
-
-        .payment-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 20px 60px var(--shadow);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .modal-header h3 {
-            font-weight: 600;
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        .close-modal:hover {
-            color: var(--error);
-        }
-
-        .modal-body {
-            padding: 2rem;
-        }
-
-        .qr-code {
-            background: white;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 200px;
-        }
-
-        .qr-placeholder {
-            width: 100%;
-            text-align: center;
-            color: var(--text-muted);
-        }
-
-        .payment-address {
-            margin-bottom: 1.5rem;
-        }
-
-        .address-display {
-            display: flex;
-            align-items: center;
-            background: var(--bg-primary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        .address-display span {
-            flex: 1;
-            font-family: monospace;
-            font-size: 0.9rem;
-            word-break: break-all;
-        }
-
-        .copy-button {
-            background: var(--accent-primary);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            margin-left: 1rem;
-            transition: background 0.3s ease;
-        }
-
-        .copy-button:hover {
-            background: var(--accent-secondary);
-        }
-
-        .payment-amount {
-            background: var(--bg-primary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .amount-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-        }
-
-        .amount-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .timer {
-            background: var(--bg-primary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-        }
-
-        .timer-text {
-            text-align: center;
-            margin-bottom: 0.5rem;
             font-weight: 500;
         }
 
-        .timer-bar {
-            background: var(--bg-tertiary);
-            border-radius: 10px;
-            height: 6px;
-            overflow: hidden;
-        }
-
-        .timer-progress {
-            background: linear-gradient(90deg, var(--success), var(--accent-primary));
-            height: 100%;
-            width: 100%;
-            transition: width 1s linear;
+        .feature-icon {
+            font-size: 1.5rem;
         }
 
         .footer {
             background: var(--bg-secondary);
             border-top: 1px solid var(--border);
-            margin-top: 4rem;
+            margin-top: 5rem;
+            padding: 3rem 0 0;
         }
 
         .footer-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 3rem 2rem 2rem;
+            padding: 0 2rem 2rem;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
+            gap: 3rem;
         }
 
         .footer-section h4 {
             color: var(--text-primary);
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 600;
         }
 
@@ -579,13 +497,14 @@
         }
 
         .footer-section li {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
         }
 
         .footer-link {
             color: var(--text-secondary);
             text-decoration: none;
             transition: color 0.3s ease;
+            font-weight: 500;
         }
 
         .footer-link:hover {
@@ -594,22 +513,24 @@
 
         .promotion-text {
             color: var(--text-secondary);
-            line-height: 1.6;
+            line-height: 1.7;
+            font-weight: 500;
         }
 
         .promotion-highlight {
             color: var(--accent-secondary);
-            font-weight: 500;
-            margin-top: 1rem;
-            padding: 1rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
             background: var(--bg-primary);
-            border-radius: 8px;
+            border-radius: 12px;
             border-left: 4px solid var(--accent-primary);
         }
 
         .footer-bottom {
             border-top: 1px solid var(--border);
             padding: 2rem;
+            margin-top: 2rem;
         }
 
         .footer-bottom-content {
@@ -619,18 +540,24 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 1.5rem;
+        }
+
+        .footer-bottom-content p {
+            color: var(--text-secondary);
+            font-weight: 500;
         }
 
         .social-links {
             display: flex;
-            gap: 1rem;
+            gap: 1.5rem;
         }
 
         .social-link {
             color: var(--text-secondary);
             text-decoration: none;
             transition: color 0.3s ease;
+            font-weight: 500;
         }
 
         .social-link:hover {
@@ -638,17 +565,18 @@
         }
 
         @media (max-width: 768px) {
-            .exchange-container {
-                grid-template-columns: 1fr;
-            }
-            
             .hero-title {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
             
             .nav-menu {
                 flex-direction: column;
                 gap: 1rem;
+                width: 100%;
+            }
+            
+            #tonconnect-button {
+                margin: 0.5rem 0;
             }
             
             .footer-bottom-content {
@@ -659,16 +587,12 @@
             .connected-wallet {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 0.5rem;
+                gap: 1rem;
             }
             
             .disconnect-btn {
-                align-self: flex-end;
-            }
-            
-            #tonconnect-button {
-                margin-left: 0;
-                margin-top: 0.5rem;
+                align-self: stretch;
+                text-align: center;
             }
         }
     </style>
@@ -749,7 +673,6 @@
                         </div>
                     </div>
 
-                    <!-- АКЦІЙНА КНОПКА -->
                     <div class="promotion-banner">
                         <h4>🎉 Special Promotion!</h4>
                         <p>Pay with 1 TON and get 2.5% discount on your next purchase!</p>
@@ -805,45 +728,6 @@
                     <div class="feature-item">
                         <span class="feature-icon">💙</span>
                         <span>TON Blockchain</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="payment-modal" id="paymentModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Payment Processing</h3>
-                    <button class="close-modal" id="closeModal">×</button>
-                </div>
-                <div class="modal-body">
-                    <div class="qr-code">
-                        <div class="qr-placeholder" id="qrCode">
-                            <div class="qr-fallback">QR Code will appear here</div>
-                        </div>
-                    </div>
-                    <div class="payment-address">
-                        <label>Send exact TON amount to:</label>
-                        <div class="address-display">
-                            <span id="paymentAddress">ton_address_here</span>
-                            <button class="copy-button" id="copyAddress">Copy</button>
-                        </div>
-                    </div>
-                    <div class="payment-amount">
-                        <div class="amount-item">
-                            <span>Amount to send:</span>
-                            <span id="sendAmount">0 TON</span>
-                        </div>
-                        <div class="amount-item">
-                            <span>You will receive:</span>
-                            <span id="receiveAmount">$0.00</span>
-                        </div>
-                    </div>
-                    <div class="timer">
-                        <div class="timer-text">Time remaining: <span id="timeRemaining">15:00</span></div>
-                        <div class="timer-bar">
-                            <div class="timer-progress" id="timerProgress"></div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -933,15 +817,6 @@
         const rateUpdateTime = document.getElementById('rateUpdateTime');
         const createPaymentBtn = document.getElementById('createPayment');
         const promotionPaymentBtn = document.getElementById('promotionPayment');
-        const paymentModal = document.getElementById('paymentModal');
-        const closeModal = document.getElementById('closeModal');
-        const qrCode = document.getElementById('qrCode');
-        const paymentAddress = document.getElementById('paymentAddress');
-        const sendAmount = document.getElementById('sendAmount');
-        const receiveAmount = document.getElementById('receiveAmount');
-        const timeRemaining = document.getElementById('timeRemaining');
-        const timerProgress = document.getElementById('timerProgress');
-        const copyAddressBtn = document.getElementById('copyAddress');
         const themeToggle = document.getElementById('themeToggle');
         const walletStatus = document.getElementById('walletStatus');
         const connectedAddress = document.getElementById('connectedAddress');
@@ -1000,16 +875,12 @@
         // Fetch TON price from API
         async function fetchTONPrice() {
             try {
-                // Using CBR API to get USD to RUB rate as base
-                const response = await fetch('https://www.cbr-xml-daily.ru/daily_json.js');
+                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=usd');
                 const data = await response.json();
                 
-                if (data && data.Valute && data.Valute.USD) {
-                    // Get USD to RUB rate and convert to TON price
-                    const usdToRub = data.Valute.USD.Value;
-                    // Adjusted calculation for TON price
-                    const newRate = (usdToRub / 70).toFixed(2);
-                    CONFIG.EXCHANGE_RATE = parseFloat(newRate);
+                if (data && data['the-open-network'] && data['the-open-network'].usd) {
+                    const newRate = data['the-open-network'].usd;
+                    CONFIG.EXCHANGE_RATE = newRate;
                     updateExchangeRateDisplay();
                     calculateTonAmount();
                     return newRate;
@@ -1087,16 +958,6 @@
                     updateWalletDisplay();
                 }
             });
-            
-            closeModal.addEventListener('click', closePaymentModal);
-            
-            paymentModal.addEventListener('click', function(e) {
-                if (e.target === paymentModal) {
-                    closePaymentModal();
-                }
-            });
-            
-            copyAddressBtn.addEventListener('click', copyAddressToClipboard);
             
             themeToggle.addEventListener('click', toggleTheme);
         }
@@ -1195,25 +1056,6 @@
         // Update exchange rate display
         function updateExchangeRate() {
             rateValue.textContent = `1 TON = $${CONFIG.EXCHANGE_RATE}`;
-        }
-
-        // Close payment modal
-        function closePaymentModal() {
-            paymentModal.style.display = 'none';
-        }
-
-        // Copy address to clipboard
-        function copyAddressToClipboard() {
-            navigator.clipboard.writeText(CONFIG.RECIPIENT_TON_ADDRESS).then(() => {
-                const originalText = copyAddressBtn.textContent;
-                copyAddressBtn.textContent = 'Copied!';
-                copyAddressBtn.style.background = 'var(--success)';
-                
-                setTimeout(() => {
-                    copyAddressBtn.textContent = originalText;
-                    copyAddressBtn.style.background = 'var(--accent-primary)';
-                }, 2000);
-            });
         }
 
         // Show error message
