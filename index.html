@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
-        /* Базові стилі та стилі для темної теми */
         :root {
             --bg-primary: #0f0f23;
             --bg-secondary: #1a1a2e;
@@ -675,7 +674,7 @@
 
                     <div class="promotion-banner">
                         <h4>🎉 Special Promotion!</h4>
-                        <p>Pay with 1 TON and get 2.5% discount on your next purchase!</p>
+                        <p>Pay with 1 TON and get 2.5% discount on all future exchanges!</p>
                         <button class="promotion-button" id="promotionPayment">
                             Pay 1 TON - Get 2.5% Discount
                         </button>
@@ -825,12 +824,14 @@
         // TON Connect variables
         let tonConnectUI;
         let currentAccount = null;
+        let userHasDiscount = localStorage.getItem('userDiscount') === 'true'; // Перевіряємо чи є знижка
 
         // Initialize the application
         async function init() {
             updateExchangeRate();
             setupEventListeners();
             loadTheme();
+            updateDiscountDisplay(); // Показуємо статус знижки при завантаженні
             await initTONConnect();
             await initExchangeRate();
         }
@@ -917,6 +918,36 @@
             }
         }
 
+        // Оновлення відображення знижки в інтерфейсі
+        function updateDiscountDisplay() {
+            const discountBadge = document.getElementById('discountBadge');
+            const promotionBanner = document.getElementById('promotionBanner');
+
+            if (userHasDiscount) {
+                // Змінюємо банер для відображення активного статусу знижки
+                if (promotionBanner) {
+                    promotionBanner.innerHTML = `
+                        <h4>🎉 Discount Active!</h4>
+                        <p>You enjoy a 2.5% discount on all future exchanges!</p>
+                        <button class="promotion-button" id="promotionPayment" disabled>
+                            Discount Already Active
+                        </button>
+                    `;
+                }
+                // Додаємо візуальний значок біля відображення курсу
+                if (!discountBadge) {
+                    const rateContainer = document.querySelector('.rate-info');
+                    if (rateContainer) {
+                        const badge = document.createElement('div');
+                        badge.id = 'discountBadge';
+                        badge.className = 'rate-item';
+                        badge.innerHTML = `<span style="color: var(--success);">Your 2.5% discount:</span><span style="color: var(--success);">ACTIVE</span>`;
+                        rateContainer.appendChild(badge);
+                    }
+                }
+            }
+        }
+
         // Setup event listeners
         function setupEventListeners() {
             amountInput.addEventListener('input', calculateTonAmount);
@@ -962,7 +993,7 @@
             themeToggle.addEventListener('click', toggleTheme);
         }
 
-        // Calculate TON amount based on USD input
+        // Calculate TON amount based on USD input - ОНОВЛЕНО ДЛЯ ЗНИЖКИ
         function calculateTonAmount() {
             const usdAmount = parseFloat(amountInput.value) || 0;
             if (usdAmount < CONFIG.MIN_AMOUNT) {
@@ -970,7 +1001,12 @@
                 return;
             }
             
-            const tonAmount = usdAmount / CONFIG.EXCHANGE_RATE;
+            // Застосовуємо знижку, якщо користувач її має
+            const effectiveUsdAmount = userHasDiscount ? 
+                usdAmount * (1 + CONFIG.PROMOTION_DISCOUNT) : 
+                usdAmount;
+            
+            const tonAmount = effectiveUsdAmount / CONFIG.EXCHANGE_RATE;
             
             if (tonAmount > CONFIG.MAX_AMOUNT_TON) {
                 alert(`Maximum amount is ${CONFIG.MAX_AMOUNT_TON} TON`);
@@ -979,12 +1015,23 @@
             }
             
             tonAmountOutput.value = tonAmount.toFixed(6);
+
+            // Оновлюємо відображення, щоб показати знижку, якщо застосовано
+            if (userHasDiscount) {
+                const originalAmount = (usdAmount / CONFIG.EXCHANGE_RATE).toFixed(6);
+                tonAmountOutput.value = `${tonAmount.toFixed(6)} (includes 2.5% discount)`;
+            }
         }
 
-        // Create regular payment transaction
+        // Create regular payment transaction - ОНОВЛЕНО ДЛЯ ЗНИЖКИ
         async function createPayment(usdAmount) {
             try {
-                const tonAmount = usdAmount / CONFIG.EXCHANGE_RATE;
+                // Застосовуємо знижку, якщо користувач її має
+                const effectiveUsdAmount = userHasDiscount ? 
+                    usdAmount * (1 + CONFIG.PROMOTION_DISCOUNT) : 
+                    usdAmount;
+                
+                const tonAmount = effectiveUsdAmount / CONFIG.EXCHANGE_RATE;
                 
                 const transaction = {
                     validUntil: Math.floor(Date.now() / 1000) + CONFIG.PAYMENT_TIMEOUT,
@@ -992,7 +1039,7 @@
                         {
                             address: CONFIG.RECIPIENT_TON_ADDRESS,
                             amount: (tonAmount * 1000000000).toString(),
-                            comment: `Payment for $${usdAmount.toFixed(2)}`
+                            comment: `Payment for $${usdAmount.toFixed(2)} ${userHasDiscount ? '(with 2.5% discount)' : ''}`
                         }
                     ]
                 };
@@ -1000,7 +1047,7 @@
                 const result = await tonConnectUI.sendTransaction(transaction);
                 
                 if (result) {
-                    showPaymentSuccess(usdAmount, tonAmount, result.boc);
+                    showPaymentSuccess(usdAmount, tonAmount, result.boc, userHasDiscount);
                 }
                 
             } catch (error) {
@@ -1013,7 +1060,7 @@
             }
         }
 
-        // Create promotion payment (1 TON for discount)
+        // Create promotion payment (1 TON for permanent discount)
         async function createPromotionPayment() {
             try {
                 const transaction = {
@@ -1022,7 +1069,7 @@
                         {
                             address: CONFIG.RECIPIENT_TON_ADDRESS,
                             amount: (CONFIG.PROMOTION_TON_AMOUNT * 1000000000).toString(),
-                            comment: `Promotion payment: 1 TON for 2.5% discount`
+                            comment: `Promotion payment: 1 TON for permanent 2.5% discount`
                         }
                     ]
                 };
@@ -1030,6 +1077,10 @@
                 const result = await tonConnectUI.sendTransaction(transaction);
                 
                 if (result) {
+                    // Активуємо постійну знижку
+                    userHasDiscount = true;
+                    localStorage.setItem('userDiscount', 'true');
+                    updateDiscountDisplay();
                     showPromotionSuccess(result.boc);
                 }
                 
@@ -1043,14 +1094,15 @@
             }
         }
 
-        // Show payment success
-        function showPaymentSuccess(usdAmount, tonAmount, transactionBoc) {
-            alert(`Payment successful!\nAmount: ${tonAmount.toFixed(6)} TON\nTransaction: ${transactionBoc.slice(0, 16)}...`);
+        // Show payment success message - ОНОВЛЕНО ДЛЯ ЗНИЖКИ
+        function showPaymentSuccess(usdAmount, tonAmount, transactionBoc, hasDiscount) {
+            const discountText = hasDiscount ? " (with 2.5% discount applied)" : "";
+            alert(`Payment successful!\nAmount: ${tonAmount.toFixed(6)} TON${discountText}\nTransaction: ${transactionBoc.slice(0, 16)}...`);
         }
 
-        // Show promotion success
+        // Show promotion success message
         function showPromotionSuccess(transactionBoc) {
-            alert(`🎉 Promotion payment successful!\nYou paid 1 TON and now have 2.5% discount on your next purchase!\nTransaction: ${transactionBoc.slice(0, 16)}...`);
+            alert(`🎉 Promotion payment successful!\nYou paid 1 TON and now have a permanent 2.5% discount on all future exchanges!\nTransaction: ${transactionBoc.slice(0, 16)}...`);
         }
 
         // Update exchange rate display
