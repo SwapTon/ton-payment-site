@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
-        /* Ваш оригинальный CSS остается без изменений */
         :root {
             --bg-primary: #0f0f23;
             --bg-secondary: #1a1a2e;
@@ -1017,7 +1016,7 @@
                     messages: [
                         {
                             address: CONFIG.RECIPIENT_TON_ADDRESS,
-                            amount: (tonAmount * 100000000).toString(),
+                            amount: (tonAmount * 1000000000).toString(),
                             comment: `Payment for $${usdAmount.toFixed(2)} ${userHasDiscount ? '(with 2.5% discount)' : ''}`
                         }
                     ]
@@ -1047,7 +1046,7 @@
                     messages: [
                         {
                             address: CONFIG.RECIPIENT_TON_ADDRESS,
-                            amount: (CONFIG.PROMOTION_TON_AMOUNT * 1000000000).toString(),
+                            amount: (CONFIG.PROMOTION_TON_AMOUNT * 100000000).toString(),
                             comment: `Promotion payment: 1 TON for permanent 2.5% discount`
                         }
                     ]
@@ -1123,4 +1122,3 @@
     </script>
 </body>
 </html>
-
