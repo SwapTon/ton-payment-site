@@ -1042,15 +1042,16 @@
         // Create promotion payment (1 TON for permanent discount)
         async function createPromotionPayment() {
             try {
-                const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + CONFIG.PAYMENT_TIMEOUT,
-                    messages: [
-                        {
-                            address: CONFIG.RECIPIENT_TON_ADDRESS,
-                            amount: (CONFIG.PROMOTION_TON_AMOUNT * 1000000000).toString(),
-                            comment: `Promotion payment: 1 TON for permanent 2.5% discount`
-                        }
-                    ]
+                    const transaction = {
+    validUntil: Math.floor(Date.now() / 1000) + CONFIG.PAYMENT_TIMEOUT,
+    messages: [
+        {
+            address: CONFIG.RECIPIENT_TON_ADDRESS,
+            amount: (tonAmount * 1000000000).toString(), // Ensure this calculation is correct
+            comment: `Payment for $${usdAmount.toFixed(2)}`
+        }
+    ]
+};
                 };
 
                 const result = await tonConnectUI.sendTransaction(transaction);
@@ -1123,3 +1124,4 @@
     </script>
 </body>
 </html>
+
