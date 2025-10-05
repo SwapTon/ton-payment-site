@@ -819,9 +819,9 @@
         const walletStatus = document.getElementById('walletStatus');
         const connectedAddress = document.getElementById('connectedAddress');
         const disconnectWallet = document.getElementById('disconnectWallet');
-
+        const tonConnectUI = new TonConnectUI({manifestUrl: 'https://swapton.github.io/ton-payment-site/tonconnect-manifest.json'});
         // TON Connect variables - ВИПРАВЛЕНО: видалено дублюючу змінну
-        let tonConnectUI;
+
         let currentAccount = null;
         let userHasDiscount = localStorage.getItem('userDiscount') === 'true';
 
@@ -835,33 +835,33 @@
             await initExchangeRate();
         }
 
-        // Initialize TON Connect - ВИПРАВЛЕНА ФУНКЦІЯ
-        async function initTONConnect() {
-            try {
-                // Initialize TON Connect UI
-                tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-                    manifestUrl: 'https://swapton.github.io/ton-payment-site/tonconnect-manifest.json',
-                    buttonRootId: 'tonconnect-button'
-                });
+    // Initialize TON Connect - ВИПРАВЛЕНА ФУНКЦІЯ
+async function initTONConnect() {
+    try {
+        // Initialize TON Connect UI
+        tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: 'https://swapton.github.io/ton-payment-site/tonconnect-manifest.json',
+            buttonRootId: 'tonconnect-button'
+        });
 
-                // Check if wallet is already connected
-                const connectedWallets = await tonConnectUI.connectionRestored;
-                if (connectedWallets && connectedWallets.account) {
-                    currentAccount = connectedWallets.account;
-                    updateWalletDisplay();
-                }
-
-                // Subscribe to connection status changes
-                tonConnectUI.onStatusChange((wallet) => {
-                    currentAccount = wallet?.account || null;
-                    updateWalletDisplay();
-                });
-
-            } catch (error) {
-                console.error('Failed to initialize TON Connect:', error);
-                showError('Failed to initialize wallet connection. Please refresh the page.');
-            }
+        // Check if wallet is already connected
+        const connectedWallets = await tonConnectUI.connectionRestored;
+        if (connectedWallets && connectedWallets.account) {
+            currentAccount = connectedWallets.account;
+            updateWalletDisplay();
         }
+
+        // Subscribe to connection status changes
+        tonConnectUI.onStatusChange((wallet) => {
+            currentAccount = wallet?.account || null;
+            updateWalletDisplay();
+        });
+
+    } catch (error) {
+        console.error('Failed to initialize TON Connect:', error);
+        showError('Failed to initialize wallet connection. Please refresh the page.');
+    }
+}
 
         // Initialize exchange rate
         async function initExchangeRate() {
@@ -1122,4 +1122,5 @@
     </script>
 </body>
 </html>
+
 
