@@ -5,385 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TON Exchange Pro | Secure Crypto Exchange</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Возможно, вам нужно будет добавить здесь ссылки на TON Connect SDK -->
     <style>
-        :root {
-            --bg-primary: #0f0f23;
-            --bg-secondary: #1a1a2e;
-            --bg-tertiary: #252547;
-            --accent-primary: #6366f1;
-            --accent-secondary: #818cf8;
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5e1;
-            --text-muted: #64748b;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --error: #ef4444;
-            --border: #334155;
-            --shadow: rgba(0, 0, 0, 0.5);
+        /* Вставьте сюда ВЕСЬ ваш оригинальный CSS, который вы предоставили */
+        /* Он нужен для сохранения визуала. */
+
+        /* Добавьте эти стили для новых элементов */
+        .payment-section {
+            display: none; /* Сначала скрыто, пока кошелек не подключен */
         }
 
-        [data-theme="light"] {
-            --bg-primary: #f8fafc;
-            --bg-secondary: #ffffff;
-            --bg-tertiary: #f1f5f9;
-            --text-primary: #1e293b;
-            --text-secondary: #475569;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --shadow: rgba(0, 0, 0, 0.1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-            color: var(--text-primary);
-            min-height: 100vh;
-            line-height: 1.6;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-
-        .navbar {
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            transition: background 0.3s ease, border-color 0.3s ease;
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-logo h2 {
+        .btn-primary {
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 700;
-        }
-
-        .nav-menu {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        .nav-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .nav-link:hover {
-            color: var(--accent-secondary);
-        }
-
-        .theme-toggle {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            padding: 0.5rem;
-            border-radius: 8px;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-left: 1rem;
+            margin: 10px 5px;
         }
 
-        .theme-toggle:hover {
-            background: var(--accent-primary);
-            transform: scale(1.05);
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px var(--shadow);
         }
 
-        .main-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .hero-section {
-            text-align: center;
-            margin-bottom: 3rem;
-            padding: 4rem 0;
-        }
-
-        .hero-title {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero-subtitle {
-            font-size: 1.3rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .exchange-container {
-            display: grid;
-            grid-template-columns: 1fr 400px;
-            gap: 2rem;
-            margin-bottom: 4rem;
-        }
-
-        @media (max-width: 968px) {
-            .exchange-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .exchange-card {
-            background: var(--bg-secondary);
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 2.5rem;
-            box-shadow: 0 20px 60px var(--shadow);
-            transition: background 0.3s ease, border-color 0.3s ease;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2.5rem;
-        }
-
-        .card-header h3 {
-            font-size: 1.8rem;
+            padding: 12px 30px;
+            border-radius: 10px;
             font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
         }
 
-        .security-badge {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: var(--success);
-            color: white;
-            padding: 0.6rem 1.2rem;
-            border-radius: 25px;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .presentation-section {
-            text-align: center;
-            padding: 3rem 2rem;
+        .address-box {
             background: var(--bg-primary);
-            border-radius: 16px;
-            margin: 2rem 0;
-            transition: background 0.3s ease;
-        }
-
-        .presentation-section h3 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-
-        .presentation-section p {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .info-card {
-            background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 2.5rem;
-            height: fit-content;
-            box-shadow: 0 20px 60px var(--shadow);
-            transition: background 0.3s ease, border-color 0.3s ease;
-        }
-
-        .info-card h4 {
-            margin-bottom: 2rem;
-            font-size: 1.6rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .info-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.2rem 0;
-            border-bottom: 1px solid var(--border);
-            transition: border-color 0.3s ease;
-        }
-
-        .info-item:last-child {
-            border-bottom: none;
-        }
-
-        .info-item span:first-child {
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .info-item span:last-child {
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        .ton-features {
-            margin-top: 2.5rem;
-            padding-top: 2.5rem;
-            border-top: 1px solid var(--border);
-            transition: border-color 0.3s ease;
-        }
-
-        .ton-features h4 {
-            margin-bottom: 1.5rem;
-            font-size: 1.4rem;
-            font-weight: 600;
-        }
-
-        .feature-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem 0;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .feature-icon {
-            font-size: 1.5rem;
-        }
-
-        .footer {
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border);
-            margin-top: 5rem;
-            padding: 3rem 0 0;
-            transition: background 0.3s ease, border-color 0.3s ease;
-        }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem 2rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
-        }
-
-        .footer-section h4 {
-            color: var(--text-primary);
-            margin-bottom: 1.5rem;
-            font-size: 1.3rem;
-            font-weight: 600;
-        }
-
-        .footer-section ul {
-            list-style: none;
-        }
-
-        .footer-section li {
-            margin-bottom: 0.8rem;
-        }
-
-        .footer-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.3s ease;
-            font-weight: 500;
-        }
-
-        .footer-link:hover {
-            color: var(--accent-secondary);
-        }
-
-        .promotion-text {
-            color: var(--text-secondary);
-            line-height: 1.7;
-            font-weight: 500;
-        }
-
-        .promotion-highlight {
-            color: var(--accent-secondary);
-            font-weight: 600;
-            margin-top: 1.5rem;
-            padding: 1.5rem;
-            background: var(--bg-primary);
-            border-radius: 12px;
-            border-left: 4px solid var(--accent-primary);
-            transition: background 0.3s ease;
-        }
-
-        .footer-bottom {
-            border-top: 1px solid var(--border);
-            padding: 2rem;
-            margin-top: 2rem;
-            transition: border-color 0.3s ease;
-        }
-
-        .footer-bottom-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-        }
-
-        .footer-bottom-content p {
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1.5rem;
-        }
-
-        .social-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.3s ease;
-            font-weight: 500;
-        }
-
-        .social-link:hover {
-            color: var(--accent-secondary);
-        }
-
-        @media (max-width: 768px) {
-            .hero-title {
-                font-size: 2.5rem;
-            }
-            
-            .nav-menu {
-                flex-direction: column;
-                gap: 1rem;
-                width: 100%;
-            }
-            
-            .footer-bottom-content {
-                flex-direction: column;
-                text-align: center;
-            }
+            padding: 15px;
+            border-radius: 10px;
+            word-break: break-all;
+            font-family: monospace;
+            margin: 15px 0;
+            text-align: center;
         }
     </style>
 </head>
@@ -397,6 +66,8 @@
                 <a href="#" class="nav-link">Exchange</a>
                 <a href="#" class="nav-link">Rates</a>
                 <a href="#" class="nav-link">FAQ</a>
+                <!-- Кнопка для подключения кошелька -->
+                <button class="btn-secondary" id="connectWalletBtn">Connect Wallet</button>
                 <button class="theme-toggle" id="themeToggle">
                     <span class="theme-icon">🌙</span>
                 </button>
@@ -422,13 +93,34 @@
                     </div>
                 </div>
 
-                <div class="presentation-section">
-                    <h3>🚀 Coming Soon</h3>
-                    <p>We are currently working on implementing secure payment functionality. Thank you for your interest in our service!</p>
+                <!-- Секция подключения кошелька -->
+                <div id="walletConnectSection">
+                    <p>🔗 <strong>Connect your TON wallet to start exchanging.</strong></p>
+                    <button class="btn-primary" id="connectBtn">Connect Wallet</button>
+                    <div id="walletInfo" style="display: none;">
+                        <p>Connected: <span id="walletAddress"></span></p>
+                    </div>
                 </div>
 
+                <!-- Секция оплаты (изначально скрыта) -->
+                <div class="payment-section" id="paymentSection">
+                    <h4>Make a Payment</h4>
+                    <p>Special Offer: <strong>1 TON discount</strong> on your first exchange!</p>
+                    <div class="address-box" id="paymentAddress">
+                        Payment Address Will Appear Here
+                    </div>
+                    <p>Amount: <span id="paymentAmount">0</span> TON</p>
+                    <button class="btn-primary" id="checkPaymentBtn">Check Payment Status</button>
+                    <div id="paymentStatus"></div>
+                </div>
+
+                <!-- Система обмена и отслеживания цен -->
                 <div class="ton-connect-info">
-                    <p>🔗 <strong>Professional Platform:</strong> We are building a secure and reliable cryptocurrency exchange platform</p>
+                    <p>⚡ <strong>Real-time Exchange System:</strong> We are building a secure and reliable cryptocurrency exchange platform with live price tracking.</p>
+                    <!-- Сюда можно встроить графики или данные об обменном курсе -->
+                    <div id="priceTicker">
+                        <p>TON/USD: <span id="tonPrice">Loading...</span></p>
+                    </div>
                 </div>
             </div>
 
@@ -450,6 +142,10 @@
                     <div class="info-item">
                         <span>Service fee:</span>
                         <span>0%</span>
+                    </div>
+                    <div class="info-item">
+                        <span>Special Offer:</span>
+                        <span style="color: var(--success);">1 TON Discount</span>
                     </div>
                 </div>
                 
@@ -473,107 +169,84 @@
     </main>
 
     <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-section">
-                <h4>Support</h4>
-                <ul>
-                    <li><a href="#" class="footer-link">Help Center</a></li>
-                    <li><a href="#" class="footer-link">Contact Us</a></li>
-                    <li><a href="#" class="footer-link">Status</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h4>About Us</h4>
-                <ul>
-                    <li><a href="#" class="footer-link">Our Company</a></li>
-                    <li><a href="#" class="footer-link">Careers</a></li>
-                    <li><a href="#" class="footer-link">Press</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h4>Legal</h4>
-                <ul>
-                    <li><a href="#" class="footer-link">Privacy Policy</a></li>
-                    <li><a href="#" class="footer-link">Terms of Service</a></li>
-                    <li><a href="#" class="footer-link">AML Policy</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h4>Special Promotion</h4>
-                <div class="promotion-text">
-                    <p>We are running this service to attract initial investors to our upcoming crypto project. Stay tuned for the official announcement of our groundbreaking blockchain initiative!</p>
-                    <p class="promotion-highlight">Join us in building the future of decentralized finance.</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="footer-bottom">
-            <div class="footer-bottom-content">
-                <p>&copy; 2024 TON Exchange Pro. All rights reserved. Secure crypto exchange platform.</p>
-                <div class="social-links">
-                    <a href="#" class="social-link">Twitter</a>
-                    <a href="#" class="social-link">Telegram</a>
-                    <a href="#" class="social-link">GitHub</a>
-                </div>
-            </div>
-        </div>
+        <!-- Ваш оригинальный футер -->
     </footer>
 
     <script>
-        // Fixed theme toggle functionality
+        // ==================================================
+        // ТОЛЬКО ПРИМЕР ЛОГИКИ - ЗАМЕНИТЕ НА РЕАЛЬНЫЙ КОД ИЗ SWAPTON
+        // ==================================================
+
+        // Ваш существующий код для переключения темы
         const themeToggle = document.getElementById('themeToggle');
-        const storageKey = 'ton-exchange-theme';
-        
-        // Get initial theme preference
-        const getColorPreference = () => {
-            if (localStorage.getItem(storageKey)) {
-                return localStorage.getItem(storageKey);
-            }
-            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
-        
-        // Set theme on document
-        const setTheme = (theme) => {
-            document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem(storageKey, theme);
-            
-            // Update toggle button icon
-            if (theme === 'light') {
-                themeToggle.innerHTML = '<span class="theme-icon">☀️</span>';
-            } else {
-                themeToggle.innerHTML = '<span class="theme-icon">🌙</span>';
-            }
-        }
-        
-        // Toggle theme function
-        const toggleTheme = () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            setTheme(newTheme);
-        }
-        
-        // Initialize theme on page load
-        const initTheme = () => {
-            const theme = getColorPreference();
-            setTheme(theme);
-        }
-        
-        // Set up event listeners
-        themeToggle.addEventListener('click', toggleTheme);
-        
-        // Listen for system theme changes
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-            if (!localStorage.getItem(storageKey)) {
-                const newTheme = e.matches ? 'dark' : 'light';
-                setTheme(newTheme);
+        // ... (ваш код темы остается без изменений)
+
+        // ===== НОВЫЙ КОД ДЛЯ ИНТЕГРАЦИИ SWAPTON =====
+
+        // Элементы интерфейса
+        const connectBtn = document.getElementById('connectBtn');
+        const walletInfo = document.getElementById('walletInfo');
+        const walletAddress = document.getElementById('walletAddress');
+        const paymentSection = document.getElementById('paymentSection');
+        const paymentAddress = document.getElementById('paymentAddress');
+        const checkPaymentBtn = document.getElementById('checkPaymentBtn');
+        const paymentStatus = document.getElementById('paymentStatus');
+
+        // Подключение кошелька (ЗАГЛУШКА - замените на реальный код из SwapTon)
+        connectBtn.addEventListener('click', async () => {
+            try {
+                // ЗДЕСЬ ДОЛЖНА БЫТЬ РЕАЛЬНАЯ ЛОГИКА ПОДКЛЮЧЕНИЯ TON CONNECT
+                // Это пример - замените на вызовы из проекта SwapTon
+                console.log("Attempting to connect wallet...");
+
+                // Имитация успешного подключения
+                const mockAddress = "EQABC123...xyz"; // Заглушка адреса
+                
+                walletAddress.textContent = mockAddress;
+                walletInfo.style.display = 'block';
+                paymentSection.style.display = 'block';
+                connectBtn.textContent = 'Connected';
+
+                // Генерация платежного адреса (ЗАГЛУШКА)
+                paymentAddress.textContent = "UQB7b... (Payment Address from SwapTon)";
+                
+            } catch (error) {
+                console.error("Connection failed:", error);
+                alert("Failed to connect wallet. Please try again.");
             }
         });
-        
-        // Initialize theme when DOM is loaded
-        document.addEventListener('DOMContentLoaded', initTheme);
+
+        // Проверка статуса платежа (ЗАГЛУШКА - замените на реальный код из SwapTon)
+        checkPaymentBtn.addEventListener('click', async () => {
+            try {
+                // ЗДЕСЬ ДОЛЖНА БЫТЬ РЕАЛЬНАЯ ЛОГИКА ПРОВЕРКИ ТРАНЗАКЦИИ
+                console.log("Checking payment status...");
+
+                // Имитация проверки
+                paymentStatus.innerHTML = '<p style="color: var(--success);">✅ Payment confirmed! Processing your exchange...</p>';
+                
+            } catch (error) {
+                console.error("Payment check failed:", error);
+                paymentStatus.innerHTML = '<p style="color: var(--error);">❌ Payment not found. Please try again.</p>';
+            }
+        });
+
+        // Система отслеживания цены TON (ЗАГЛУШКА)
+        async function updateTonPrice() {
+            try {
+                // ЗДЕСЬ МОЖЕТ БЫТЬ ИНТЕГРАЦИЯ С API ДЛЯ ПОЛУЧЕНИЯ ЦЕНЫ
+                const tonPriceElement = document.getElementById('tonPrice');
+                // Заглушка - реальная цена должна приходить с API
+                tonPriceElement.textContent = "$5.42"; 
+            } catch (error) {
+                console.error("Failed to fetch TON price:", error);
+            }
+        }
+
+        // Обновляем цену при загрузке и каждые 30 секунд
+        updateTonPrice();
+        setInterval(updateTonPrice, 30000);
+
     </script>
 </body>
 </html>
