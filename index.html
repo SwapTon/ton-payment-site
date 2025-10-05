@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TON Exchange Pro | Secure Crypto Exchange</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
         :root {
             --bg-primary: #0f0f23;
@@ -46,6 +45,7 @@
             color: var(--text-primary);
             min-height: 100vh;
             line-height: 1.6;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         .navbar {
@@ -55,6 +55,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            transition: background 0.3s ease, border-color 0.3s ease;
         }
 
         .nav-container {
@@ -91,10 +92,6 @@
             color: var(--accent-secondary);
         }
 
-        #tonconnect-button {
-            margin-left: 1rem;
-        }
-
         .theme-toggle {
             background: var(--bg-tertiary);
             border: 1px solid var(--border);
@@ -108,6 +105,7 @@
 
         .theme-toggle:hover {
             background: var(--accent-primary);
+            transform: scale(1.05);
         }
 
         .main-container {
@@ -158,6 +156,7 @@
             border-radius: 20px;
             padding: 2.5rem;
             box-shadow: 0 20px 60px var(--shadow);
+            transition: background 0.3s ease, border-color 0.3s ease;
         }
 
         .card-header {
@@ -184,225 +183,26 @@
             font-weight: 500;
         }
 
-        .wallet-status {
+        .presentation-section {
+            text-align: center;
+            padding: 3rem 2rem;
             background: var(--bg-primary);
-            border: 1px solid var(--success);
-            border-radius: 12px;
-            padding: 1.2rem;
-            margin-bottom: 2rem;
-            display: none;
-        }
-
-        .connected-wallet {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-        }
-
-        .wallet-address {
-            font-family: 'Courier New', monospace;
-            font-size: 0.95rem;
-            color: var(--success);
-            flex: 1;
-            font-weight: 500;
-        }
-
-        .disconnect-btn {
-            background: var(--error);
-            color: white;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .disconnect-btn:hover {
-            background: #dc2626;
-            transform: translateY(-1px);
-        }
-
-        .form-group {
-            margin-bottom: 2rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.8rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-        }
-
-        .input-group, .output-group {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 1.2rem;
-            background: var(--bg-primary);
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-            transform: translateY(-1px);
-        }
-
-        .input-currency, .output-currency {
-            position: absolute;
-            right: 1.2rem;
-            color: var(--text-muted);
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .form-output {
-            width: 100%;
-            padding: 1.2rem;
-            background: var(--bg-tertiary);
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: not-allowed;
-        }
-
-        .rate-info {
-            background: var(--bg-primary);
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .rate-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.8rem;
-            padding: 0.5rem 0;
-        }
-
-        .rate-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .rate-item span:first-child {
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .rate-item span:last-child {
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        .promotion-banner {
-            background: linear-gradient(135deg, var(--warning), var(--accent-primary));
             border-radius: 16px;
-            padding: 2rem;
-            margin: 2.5rem 0;
-            text-align: center;
-            border: 2px solid var(--warning);
-            box-shadow: 0 10px 40px rgba(245, 158, 11, 0.3);
+            margin: 2rem 0;
+            transition: background 0.3s ease;
         }
 
-        .promotion-banner h4 {
-            color: white;
-            margin-bottom: 0.8rem;
-            font-size: 1.4rem;
-            font-weight: 700;
+        .presentation-section h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
         }
 
-        .promotion-banner p {
-            color: rgba(255, 255, 255, 0.95);
-            margin-bottom: 1.5rem;
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-
-        .promotion-button {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 2px solid white;
-            padding: 1rem 2.5rem;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .promotion-button:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
-        }
-
-        .primary-button {
-            width: 100%;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: white;
-            border: none;
-            padding: 1.3rem 2rem;
-            border-radius: 12px;
+        .presentation-section p {
             font-size: 1.2rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
-        }
-
-        .primary-button:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.4);
-        }
-
-        .primary-button:disabled {
-            background: var(--bg-tertiary);
-            color: var(--text-muted);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .button-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.8rem;
-        }
-
-        .ton-connect-info {
-            background: var(--bg-primary);
-            border: 2px solid var(--accent-primary);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .ton-connect-info p {
-            margin: 0;
             color: var(--text-secondary);
-            font-size: 1rem;
-            font-weight: 500;
-            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         .info-card {
@@ -412,6 +212,7 @@
             padding: 2.5rem;
             height: fit-content;
             box-shadow: 0 20px 60px var(--shadow);
+            transition: background 0.3s ease, border-color 0.3s ease;
         }
 
         .info-card h4 {
@@ -427,6 +228,7 @@
             align-items: center;
             padding: 1.2rem 0;
             border-bottom: 1px solid var(--border);
+            transition: border-color 0.3s ease;
         }
 
         .info-item:last-child {
@@ -447,6 +249,7 @@
             margin-top: 2.5rem;
             padding-top: 2.5rem;
             border-top: 1px solid var(--border);
+            transition: border-color 0.3s ease;
         }
 
         .ton-features h4 {
@@ -473,6 +276,7 @@
             border-top: 1px solid var(--border);
             margin-top: 5rem;
             padding: 3rem 0 0;
+            transition: background 0.3s ease, border-color 0.3s ease;
         }
 
         .footer-container {
@@ -524,12 +328,14 @@
             background: var(--bg-primary);
             border-radius: 12px;
             border-left: 4px solid var(--accent-primary);
+            transition: background 0.3s ease;
         }
 
         .footer-bottom {
             border-top: 1px solid var(--border);
             padding: 2rem;
             margin-top: 2rem;
+            transition: border-color 0.3s ease;
         }
 
         .footer-bottom-content {
@@ -574,23 +380,8 @@
                 width: 100%;
             }
             
-            #tonconnect-button {
-                margin: 0.5rem 0;
-            }
-            
             .footer-bottom-content {
                 flex-direction: column;
-                text-align: center;
-            }
-            
-            .connected-wallet {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            
-            .disconnect-btn {
-                align-self: stretch;
                 text-align: center;
             }
         }
@@ -606,7 +397,6 @@
                 <a href="#" class="nav-link">Exchange</a>
                 <a href="#" class="nav-link">Rates</a>
                 <a href="#" class="nav-link">FAQ</a>
-                <div id="tonconnect-button"></div>
                 <button class="theme-toggle" id="themeToggle">
                     <span class="theme-icon">🌙</span>
                 </button>
@@ -625,76 +415,25 @@
         <div class="exchange-container">
             <div class="exchange-card">
                 <div class="card-header">
-                    <h3>Create Payment</h3>
+                    <h3>Our Service</h3>
                     <div class="security-badge">
                         <span class="secure-icon">🔒</span>
                         <span>Secure</span>
                     </div>
                 </div>
 
-                <div class="wallet-status" id="walletStatus">
-                    <div class="connected-wallet">
-                        <span class="wallet-icon">👛</span>
-                        <span class="wallet-address" id="connectedAddress"></span>
-                        <button class="disconnect-btn" id="disconnectWallet">Disconnect</button>
-                    </div>
+                <div class="presentation-section">
+                    <h3>🚀 Coming Soon</h3>
+                    <p>We are currently working on implementing secure payment functionality. Thank you for your interest in our service!</p>
                 </div>
 
-                <div class="payment-form">
-                    <div class="form-group">
-                        <label for="amount">Amount (USD)</label>
-                        <div class="input-group">
-                            <input type="number" id="amount" class="form-input" placeholder="Enter amount" min="1" step="0.01">
-                            <span class="input-currency">USD</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="tonAmount">You will receive</label>
-                        <div class="output-group">
-                            <input type="text" id="tonAmount" class="form-output" readonly>
-                            <span class="output-currency">TON</span>
-                        </div>
-                    </div>
-
-                    <div class="rate-info">
-                        <div class="rate-item">
-                            <span>Exchange rate:</span>
-                            <span id="rateValue">1 TON = $2.50</span>
-                        </div>
-                        <div class="rate-item">
-                            <span>Service fee:</span>
-                            <span>0%</span>
-                        </div>
-                        <div class="rate-item">
-                            <span>Last update:</span>
-                            <span id="rateUpdateTime">--:--:--</span>
-                        </div>
-                    </div>
-
-                    <div class="promotion-banner">
-                        <h4>🎉 Special Promotion!</h4>
-                        <p>Pay with 1 TON and get 2.5% discount on all future exchanges!</p>
-                        <button class="promotion-button" id="promotionPayment">
-                            Pay 1 TON - Get 2.5% Discount
-                        </button>
-                    </div>
-
-                    <button id="createPayment" class="primary-button" disabled>
-                        <span class="button-content">
-                            <span class="button-icon">🔗</span>
-                            Connect Wallet to Continue
-                        </span>
-                    </button>
-
-                    <div class="ton-connect-info">
-                        <p>🔗 <strong>Secure Connection:</strong> Using TON Connect to safely link your wallet without sharing private keys</p>
-                    </div>
+                <div class="ton-connect-info">
+                    <p>🔗 <strong>Professional Platform:</strong> We are building a secure and reliable cryptocurrency exchange platform</p>
                 </div>
             </div>
 
             <div class="info-card">
-                <h4>Transaction Details</h4>
+                <h4>Service Details</h4>
                 <div class="transaction-info">
                     <div class="info-item">
                         <span>Minimum amount:</span>
@@ -784,341 +523,57 @@
     </footer>
 
     <script>
-        // =============================================================================
-        // CONFIGURATION - НАЛАШТУВАННЯ СКРИПТА
-        // =============================================================================
-
-        const CONFIG = {
-            // ВКАЖІТЬ ВАШУ TON АДРЕСУ ТУТ (ваш гаманець):
-            RECIPIENT_TON_ADDRESS: "UQDYSduMmfE6sBBBhvTR1wGtTG0_hmsj_xRaIg7P_W6-Pv1y",
-            
-            // НАЛАШТУВАННЯ ОБМІНУ:
-            EXCHANGE_RATE: 2.50, // Початковий курс (буде автоматично оновлено)
-            SERVICE_FEE: 0, // 0% комісія
-            PAYMENT_TIMEOUT: 900, // 15 хвилин в секундах
-            MIN_AMOUNT: 10, // Мінімальна сума в USD
-            MAX_AMOUNT_TON: 150, // Максимальна сума в TON
-            
-            // АКЦІЙНА ПРОПОЗИЦІЯ:
-            PROMOTION_TON_AMOUNT: 1, // Сума TON для акції
-            PROMOTION_DISCOUNT: 0.025 // Знижка 2.5%
-        };
-
-        // =============================================================================
-        // MAIN APPLICATION LOGIC - ОСНОВНА ЛОГІКА ПРОГРАМИ
-        // =============================================================================
-
-        // DOM Elements
-        const amountInput = document.getElementById('amount');
-        const tonAmountOutput = document.getElementById('tonAmount');
-        const rateValue = document.getElementById('rateValue');
-        const rateUpdateTime = document.getElementById('rateUpdateTime');
-        const createPaymentBtn = document.getElementById('createPayment');
-        const promotionPaymentBtn = document.getElementById('promotionPayment');
+        // Fixed theme toggle functionality
         const themeToggle = document.getElementById('themeToggle');
-        const walletStatus = document.getElementById('walletStatus');
-        const connectedAddress = document.getElementById('connectedAddress');
-        const disconnectWallet = document.getElementById('disconnectWallet');
-
-        // TON Connect variables - ВИПРАВЛЕНО: видалено дублюючу змінну
-        let tonConnectUI;
-        let currentAccount = null;
-        let userHasDiscount = localStorage.getItem('userDiscount') === 'true';
-
-        // Initialize the application
-        async function init() {
-            updateExchangeRate();
-            setupEventListeners();
-            loadTheme();
-            updateDiscountDisplay();
-            await initTONConnect(); // Виправлено порядок ініціалізації
-            await initExchangeRate();
-        }
-
-        // Initialize TON Connect - ВИПРАВЛЕНА ФУНКЦІЯ
-        async function initTONConnect() {
-            try {
-                // Initialize TON Connect UI
-                tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-                    manifestUrl: 'https://swapton.github.io/ton-payment-site/tonconnect-manifest.json',
-                    buttonRootId: 'tonconnect-button'
-                });
-
-                // Check if wallet is already connected
-                const connectedWallets = await tonConnectUI.connectionRestored;
-                if (connectedWallets && connectedWallets.account) {
-                    currentAccount = connectedWallets.account;
-                    updateWalletDisplay();
-                }
-
-                // Subscribe to connection status changes
-                tonConnectUI.onStatusChange((wallet) => {
-                    currentAccount = wallet?.account || null;
-                    updateWalletDisplay();
-                });
-
-            } catch (error) {
-                console.error('Failed to initialize TON Connect:', error);
-                showError('Failed to initialize wallet connection. Please refresh the page.');
+        const storageKey = 'ton-exchange-theme';
+        
+        // Get initial theme preference
+        const getColorPreference = () => {
+            if (localStorage.getItem(storageKey)) {
+                return localStorage.getItem(storageKey);
             }
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         }
-
-        // Initialize exchange rate
-        async function initExchangeRate() {
-            await fetchTONPrice();
-            setInterval(fetchTONPrice, 30000);
-        }
-
-        // Fetch TON price from API
-        async function fetchTONPrice() {
-            try {
-                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=usd');
-                const data = await response.json();
-                
-                if (data && data['the-open-network'] && data['the-open-network'].usd) {
-                    const newRate = data['the-open-network'].usd;
-                    CONFIG.EXCHANGE_RATE = newRate;
-                    updateExchangeRateDisplay();
-                    calculateTonAmount();
-                    return newRate;
-                } else {
-                    throw new Error('Could not fetch rate data');
-                }
-            } catch (error) {
-                console.error('Error fetching rate:', error);
-                rateValue.textContent = `1 TON = $${CONFIG.EXCHANGE_RATE} (data may be outdated)`;
-                return CONFIG.EXCHANGE_RATE;
-            }
-        }
-
-        // Update exchange rate display
-        function updateExchangeRateDisplay() {
-            rateValue.textContent = `1 TON = $${CONFIG.EXCHANGE_RATE.toFixed(2)}`;
-            if (rateUpdateTime) {
-                rateUpdateTime.textContent = new Date().toLocaleTimeString();
-            }
-        }
-
-        // Update wallet connection display
-        function updateWalletDisplay() {
-            if (currentAccount) {
-                const shortAddress = `${currentAccount.address.slice(0, 6)}...${currentAccount.address.slice(-6)}`;
-                connectedAddress.textContent = shortAddress;
-                walletStatus.style.display = 'block';
-                createPaymentBtn.disabled = false;
-                createPaymentBtn.innerHTML = '<span class="button-content"><span class="button-icon">💎</span>Create Payment</span>';
+        
+        // Set theme on document
+        const setTheme = (theme) => {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem(storageKey, theme);
+            
+            // Update toggle button icon
+            if (theme === 'light') {
+                themeToggle.innerHTML = '<span class="theme-icon">☀️</span>';
             } else {
-                walletStatus.style.display = 'none';
-                createPaymentBtn.disabled = true;
-                createPaymentBtn.innerHTML = '<span class="button-content"><span class="button-icon">🔗</span>Connect Wallet to Continue</span>';
-            }
-        }
-
-        // Оновлення відображення знижки в інтерфейсі
-        function updateDiscountDisplay() {
-            const promotionBanner = document.querySelector('.promotion-banner');
-
-            if (userHasDiscount) {
-                if (promotionBanner) {
-                    promotionBanner.innerHTML = `
-                        <h4>🎉 Discount Active!</h4>
-                        <p>You enjoy a 2.5% discount on all future exchanges!</p>
-                        <button class="promotion-button" id="promotionPayment" disabled>
-                            Discount Already Active
-                        </button>
-                    `;
-                }
-            }
-        }
-
-        // Setup event listeners
-        function setupEventListeners() {
-            amountInput.addEventListener('input', calculateTonAmount);
-            
-            createPaymentBtn.addEventListener('click', function() {
-                if (!currentAccount) {
-                    alert('Please connect your wallet first');
-                    return;
-                }
-                
-                const usdAmount = parseFloat(amountInput.value) || 0;
-                if (usdAmount < CONFIG.MIN_AMOUNT) {
-                    alert(`Minimum amount is $${CONFIG.MIN_AMOUNT}`);
-                    return;
-                }
-                
-                const tonAmount = usdAmount / CONFIG.EXCHANGE_RATE;
-                if (tonAmount > CONFIG.MAX_AMOUNT_TON) {
-                    alert(`Maximum amount is ${CONFIG.MAX_AMOUNT_TON} TON`);
-                    return;
-                }
-                
-                createPayment(usdAmount);
-            });
-            
-            promotionPaymentBtn.addEventListener('click', function() {
-                if (!currentAccount) {
-                    alert('Please connect your wallet first');
-                    return;
-                }
-                createPromotionPayment();
-            });
-            
-            disconnectWallet.addEventListener('click', async function() {
-                if (tonConnectUI) {
-                    await tonConnectUI.disconnect();
-                    currentAccount = null;
-                    updateWalletDisplay();
-                }
-            });
-            
-            themeToggle.addEventListener('click', toggleTheme);
-        }
-
-        // Calculate TON amount based on USD input
-        function calculateTonAmount() {
-            const usdAmount = parseFloat(amountInput.value) || 0;
-            if (usdAmount < CONFIG.MIN_AMOUNT) {
-                tonAmountOutput.value = '';
-                return;
-            }
-            
-            const effectiveUsdAmount = userHasDiscount ? 
-                usdAmount * (1 + CONFIG.PROMOTION_DISCOUNT) : 
-                usdAmount;
-            
-            const tonAmount = effectiveUsdAmount / CONFIG.EXCHANGE_RATE;
-            
-            if (tonAmount > CONFIG.MAX_AMOUNT_TON) {
-                alert(`Maximum amount is ${CONFIG.MAX_AMOUNT_TON} TON`);
-                tonAmountOutput.value = '';
-                return;
-            }
-            
-            tonAmountOutput.value = tonAmount.toFixed(6);
-
-            if (userHasDiscount) {
-                tonAmountOutput.value = `${tonAmount.toFixed(6)} (includes 2.5% discount)`;
-            }
-        }
-
-        // Create regular payment transaction
-        async function createPayment(usdAmount) {
-            try {
-                const effectiveUsdAmount = userHasDiscount ? 
-                    usdAmount * (1 + CONFIG.PROMOTION_DISCOUNT) : 
-                    usdAmount;
-                
-                const tonAmount = effectiveUsdAmount / CONFIG.EXCHANGE_RATE;
-                
-                const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + CONFIG.PAYMENT_TIMEOUT,
-                    messages: [
-                        {
-                            address: CONFIG.RECIPIENT_TON_ADDRESS,
-                            amount: (tonAmount * 1000000000).toString(),
-                            comment: `Payment for $${usdAmount.toFixed(2)} ${userHasDiscount ? '(with 2.5% discount)' : ''}`
-                        }
-                    ]
-                };
-
-                const result = await tonConnectUI.sendTransaction(transaction);
-                
-                if (result) {
-                    showPaymentSuccess(usdAmount, tonAmount, result.boc, userHasDiscount);
-                }
-                
-            } catch (error) {
-                console.error('Payment failed:', error);
-                if (error?.message?.includes('User rejected')) {
-                    alert('Payment was cancelled by user');
-                } else {
-                    alert('Payment failed. Please try again.');
-                }
-            }
-        }
-
-        // Create promotion payment (1 TON for permanent discount)
-        async function createPromotionPayment() {
-            try {
-                const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + CONFIG.PAYMENT_TIMEOUT,
-                    messages: [
-                        {
-                            address: CONFIG.RECIPIENT_TON_ADDRESS,
-                            amount: (CONFIG.PROMOTION_TON_AMOUNT * 1000000000).toString(),
-                            comment: `Promotion payment: 1 TON for permanent 2.5% discount`
-                        }
-                    ]
-                };
-
-                const result = await tonConnectUI.sendTransaction(transaction);
-                
-                if (result) {
-                    userHasDiscount = true;
-                    localStorage.setItem('userDiscount', 'true');
-                    updateDiscountDisplay();
-                    showPromotionSuccess(result.boc);
-                }
-                
-            } catch (error) {
-                console.error('Promotion payment failed:', error);
-                if (error?.message?.includes('User rejected')) {
-                    alert('Payment was cancelled by user');
-                } else {
-                    alert('Payment failed. Please try again.');
-                }
-            }
-        }
-
-        // Show payment success message
-        function showPaymentSuccess(usdAmount, tonAmount, transactionBoc, hasDiscount) {
-            const discountText = hasDiscount ? " (with 2.5% discount applied)" : "";
-            alert(`Payment successful!\nAmount: ${tonAmount.toFixed(6)} TON${discountText}\nTransaction: ${transactionBoc.slice(0, 16)}...`);
-        }
-
-        // Show promotion success message
-        function showPromotionSuccess(transactionBoc) {
-            alert(`🎉 Promotion payment successful!\nYou paid 1 TON and now have a permanent 2.5% discount on all future exchanges!\nTransaction: ${transactionBoc.slice(0, 16)}...`);
-        }
-
-        // Update exchange rate display
-        function updateExchangeRate() {
-            rateValue.textContent = `1 TON = $${CONFIG.EXCHANGE_RATE}`;
-        }
-
-        // Show error message
-        function showError(message) {
-            alert('Error: ' + message);
-        }
-
-        // Theme toggle functionality
-        function toggleTheme() {
-            const currentTheme = document.body.getAttribute('data-theme');
-            if (currentTheme === 'light') {
-                document.body.removeAttribute('data-theme');
                 themeToggle.innerHTML = '<span class="theme-icon">🌙</span>';
-                localStorage.setItem('theme', 'dark');
-            } else {
-                document.body.setAttribute('data-theme', 'light');
-                themeToggle.innerHTML = '<span class="theme-icon">☀️</span>';
-                localStorage.setItem('theme', 'light');
             }
         }
-
-        // Load saved theme
-        function loadTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            if (savedTheme === 'light') {
-                document.body.setAttribute('data-theme', 'light');
-                themeToggle.innerHTML = '<span class="theme-icon">☀️</span>';
-            }
+        
+        // Toggle theme function
+        const toggleTheme = () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            setTheme(newTheme);
         }
-
-        // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            init();
+        
+        // Initialize theme on page load
+        const initTheme = () => {
+            const theme = getColorPreference();
+            setTheme(theme);
+        }
+        
+        // Set up event listeners
+        themeToggle.addEventListener('click', toggleTheme);
+        
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (!localStorage.getItem(storageKey)) {
+                const newTheme = e.matches ? 'dark' : 'light';
+                setTheme(newTheme);
+            }
         });
+        
+        // Initialize theme when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initTheme);
     </script>
 </body>
 </html>
