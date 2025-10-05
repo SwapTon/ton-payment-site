@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
-        /* Ваш оригінальний CSS залишається без змін */
+        /* Ваш оригинальный CSS остается без изменений */
         :root {
             --bg-primary: #0f0f23;
             --bg-secondary: #1a1a2e;
@@ -1042,16 +1042,15 @@
         // Create promotion payment (1 TON for permanent discount)
         async function createPromotionPayment() {
             try {
-                    const transaction = {
-    validUntil: Math.floor(Date.now() / 1000) + CONFIG.PAYMENT_TIMEOUT,
-    messages: [
-        {
-            address: CONFIG.RECIPIENT_TON_ADDRESS,
-            amount: (tonAmount * 1000000000).toString(), // Ensure this calculation is correct
-            comment: `Payment for $${usdAmount.toFixed(2)}`
-        }
-    ]
-};
+                const transaction = {
+                    validUntil: Math.floor(Date.now() / 1000) + CONFIG.PAYMENT_TIMEOUT,
+                    messages: [
+                        {
+                            address: CONFIG.RECIPIENT_TON_ADDRESS,
+                            amount: (CONFIG.PROMOTION_TON_AMOUNT * 1000000000).toString(),
+                            comment: `Promotion payment: 1 TON for permanent 2.5% discount`
+                        }
+                    ]
                 };
 
                 const result = await tonConnectUI.sendTransaction(transaction);
@@ -1124,4 +1123,3 @@
     </script>
 </body>
 </html>
-
