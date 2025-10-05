@@ -819,9 +819,9 @@
         const walletStatus = document.getElementById('walletStatus');
         const connectedAddress = document.getElementById('connectedAddress');
         const disconnectWallet = document.getElementById('disconnectWallet');
-        const tonConnectUI = new TonConnectUI({manifestUrl: 'https://swapton.github.io/ton-payment-site/tonconnect-manifest.json'});
-        // TON Connect variables - ВИПРАВЛЕНО: видалено дублюючу змінну
 
+        // TON Connect variables - ВИПРАВЛЕНО: видалено дублюючу змінну
+        let tonConnectUI;
         let currentAccount = null;
         let userHasDiscount = localStorage.getItem('userDiscount') === 'true';
 
@@ -835,33 +835,33 @@
             await initExchangeRate();
         }
 
-    // Initialize TON Connect - ВИПРАВЛЕНА ФУНКЦІЯ
-async function initTONConnect() {
-    try {
-        // Initialize TON Connect UI
-        tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://swapton.github.io/ton-payment-site/tonconnect-manifest.json',
-            buttonRootId: 'tonconnect-button'
-        });
+        // Initialize TON Connect - ВИПРАВЛЕНА ФУНКЦІЯ
+        async function initTONConnect() {
+            try {
+                // Initialize TON Connect UI
+                tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+                    manifestUrl: 'https://swapton.github.io/ton-payment-site/tonconnect-manifest.json',
+                    buttonRootId: 'tonconnect-button'
+                });
 
-        // Check if wallet is already connected
-        const connectedWallets = await tonConnectUI.connectionRestored;
-        if (connectedWallets && connectedWallets.account) {
-            currentAccount = connectedWallets.account;
-            updateWalletDisplay();
+                // Check if wallet is already connected
+                const connectedWallets = await tonConnectUI.connectionRestored;
+                if (connectedWallets && connectedWallets.account) {
+                    currentAccount = connectedWallets.account;
+                    updateWalletDisplay();
+                }
+
+                // Subscribe to connection status changes
+                tonConnectUI.onStatusChange((wallet) => {
+                    currentAccount = wallet?.account || null;
+                    updateWalletDisplay();
+                });
+
+            } catch (error) {
+                console.error('Failed to initialize TON Connect:', error);
+                showError('Failed to initialize wallet connection. Please refresh the page.');
+            }
         }
-
-        // Subscribe to connection status changes
-        tonConnectUI.onStatusChange((wallet) => {
-            currentAccount = wallet?.account || null;
-            updateWalletDisplay();
-        });
-
-    } catch (error) {
-        console.error('Failed to initialize TON Connect:', error);
-        showError('Failed to initialize wallet connection. Please refresh the page.');
-    }
-}
 
         // Initialize exchange rate
         async function initExchangeRate() {
@@ -1016,7 +1016,7 @@ async function initTONConnect() {
                     messages: [
                         {
                             address: CONFIG.RECIPIENT_TON_ADDRESS,
-                            amount: (tonAmount * 10000000000).toString(),
+                            amount: (tonAmount * 1000000000).toString(),
                             comment: `Payment for $${usdAmount.toFixed(2)} ${userHasDiscount ? '(with 2.5% discount)' : ''}`
                         }
                     ]
@@ -1046,7 +1046,7 @@ async function initTONConnect() {
                     messages: [
                         {
                             address: CONFIG.RECIPIENT_TON_ADDRESS,
-                            amount: (CONFIG.PROMOTION_TON_AMOUNT * 100000000).toString(),
+                            amount: (CONFIG.PROMOTION_TON_AMOUNT * 1000000000).toString(),
                             comment: `Promotion payment: 1 TON for permanent 2.5% discount`
                         }
                     ]
@@ -1122,5 +1122,3 @@ async function initTONConnect() {
     </script>
 </body>
 </html>
-
-
