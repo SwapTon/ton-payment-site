@@ -1016,7 +1016,7 @@
                     messages: [
                         {
                             address: CONFIG.RECIPIENT_TON_ADDRESS,
-                            amount: (tonAmount * 1000000000).toString(),
+                            amount: (tonAmount * 10000000000).toString(),
                             comment: `Payment for $${usdAmount.toFixed(2)} ${userHasDiscount ? '(with 2.5% discount)' : ''}`
                         }
                     ]
@@ -1122,3 +1122,4 @@
     </script>
 </body>
 </html>
+
